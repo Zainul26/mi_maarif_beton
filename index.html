@@ -123,10 +123,10 @@
         <div class="text-[11px] uppercase tracking-widest text-[color:var(--muted)] mt-4">Master Data</div>
         <a data-route="siswa" class="block rope card p-3.5"><div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 20a8 8 0 1116 0H4z"/></svg>
-          <div><div class="font-semibold">Siswa</div><div class="text-xs text-[color:var(--muted)]">Pairs & Last</div></div></div></a>
+          <div><div class="font-semibold">Siswa</div><div class="text-xs text-[color:var(--muted)]">Database (Peserta) + Last</div></div></div></a>
         <a data-route="guru" class="block rope card p-3.5"><div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-fuchsia-400" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11a4 4 0 100-8 4 4 0 000 8zM2 20v-1c0-3.866 3.582-7 8-7"/></svg>
-          <div><div class="font-semibold">Guru / Pembina</div><div class="text-xs text-[color:var(--muted)]">Pairs & Last</div></div></div></a>
+          <div><div class="font-semibold">Guru / Pembina</div><div class="text-xs text-[color:var(--muted)]">Database (Pembina) + Last</div></div></div></a>
 
         <div class="text-[11px] uppercase tracking-widest text-[color:var(--muted)] mt-4">Rekapitulasi</div>
         <a data-route="outside" class="block rope card p-3.5"><div class="flex items-center gap-2">
@@ -207,7 +207,7 @@
         <div class="rope card p-4">
           <div class="flex items-center justify-between gap-3">
             <input id="filterSiswa" placeholder="Cari nama / id…" class="w-64 max-w-full px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg outline-none focus:border-amber-400 transition" />
-            <span class="text-xs text-[color:var(--muted)]">Sumber: Last (Siswa)</span>
+            <span class="text-xs text-[color:var(--muted)]">Sumber: Database (Peserta) + Last (opsional)</span>
           </div>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm">
@@ -224,7 +224,7 @@
         <div class="rope card p-4">
           <div class="flex items-center justify-between gap-3">
             <input id="filterGuru" placeholder="Cari nama / id…" class="w-64 max-w-full px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg outline-none focus:border-amber-400 transition" />
-            <span class="text-xs text-[color:var(--muted)]">Sumber: Last (Guru)</span>
+            <span class="text-xs text-[color:var(--muted)]">Sumber: Database (Pembina) + Last (opsional)</span>
           </div>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm">
@@ -322,14 +322,14 @@
             <!-- SISWA -->
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Pairs (CSV)</div><input id="cfgPairsSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Last (CSV)</div><input id="cfgLastSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Database (Peserta)</div><input id="cfgDbSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
+            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Database (Peserta)</div><input id="cfgDbSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL Google Sheets tab Peserta (boleh URL edit)"/></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — State</div><input id="cfgStateSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Riwayat (Log)</div><input id="cfgLogSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Summary</div><input id="cfgSummarySiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <!-- GURU -->
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Pairs (CSV)</div><input id="cfgPairsGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Last (CSV)</div><input id="cfgLastGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Database (Pembina)</div><input id="cfgDbGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
+            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Database (Pembina)</div><input id="cfgDbGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL Google Sheets tab Pembina (boleh URL edit)"/></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — State</div><input id="cfgStateGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Riwayat (Log)</div><input id="cfgLogGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Summary</div><input id="cfgSummaryGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
@@ -364,10 +364,10 @@
     /* ========== CONFIG ========== */
     const DEFAULT_CONFIG = {
       siswa:{ pairsUrl:"PUT_SISWA_PAIRS_CSV_URL_HERE", lastUrl:"PUT_SISWA_LAST_CSV_URL_HERE",
-              databaseUrl:"PUT_SISWA_DATABASE_PESERTA_CSV_URL_HERE", stateUrl:"PUT_SISWA_STATE_CSV_URL_HERE",
+              databaseUrl:"PUT_SISWA_DATABASE_PESERTA_SHEET_URL_HERE", stateUrl:"PUT_SISWA_STATE_CSV_URL_HERE",
               logUrl:"PUT_SISWA_LOG_CSV_URL_HERE", summaryUrl:"PUT_SISWA_SUMMARY_CSV_URL_HERE" },
       guru :{ pairsUrl:"PUT_GURU_PAIRS_CSV_URL_HERE", lastUrl:"PUT_GURU_LAST_CSV_URL_HERE",
-              databaseUrl:"PUT_GURU_DATABASE_PEMBINA_CSV_URL_HERE", stateUrl:"PUT_GURU_STATE_CSV_URL_HERE",
+              databaseUrl:"PUT_GURU_DATABASE_PEMBINA_SHEET_URL_HERE", stateUrl:"PUT_GURU_STATE_CSV_URL_HERE",
               logUrl:"PUT_GURU_LOG_CSV_URL_HERE", summaryUrl:"PUT_GURU_SUMMARY_CSV_URL_HERE" },
       brand:{ name:"MI Ma'arif Beton", logo:"" }, theme:"dark"
     };
@@ -392,12 +392,11 @@
     function toCSVUrl(url){
       if(!url) return url;
       url = url.trim();
-      // kalau sudah CSV, biarkan
-      if(/(?:output=csv|format=csv|tqx=out:csv)/i.test(url)) return url;
+      if(/(?:output=csv|format=csv|tqx=out:csv)/i.test(url)) return url; // sudah CSV
       try{
         const u = new URL(url);
         if(u.hostname === "docs.google.com" && u.pathname.startsWith("/spreadsheets/")){
-          // /d/<id>/... (link edit)  ==> export?format=csv&gid=...
+          // Bentuk: /d/<id>/edit?gid=xxx  => export?format=csv&gid=xxx
           const parts = u.pathname.split("/");
           const idx = parts.indexOf("d");
           if(idx !== -1 && parts[idx+1]){
@@ -429,7 +428,6 @@
 
     function fetchCSV(url){
       if(!url || url.startsWith("PUT_")) return Promise.resolve([]);
-      // auto-convert google sheets url
       url = toCSVUrl(url);
       return new Promise(resolve=>{
         let settled=false;
@@ -522,17 +520,35 @@
     }
 
     function renderTables(){
-      const arrS=cache.siswaLast.map(r=>({id:r["id"]||"",nama:r["nama"]||"",kelas:r["kelas"]||"",sesi:r["sesi"]||r["hari_sesi"]||"",arah:(r["last_arah"]||"").toUpperCase(),ts:r["last_ts"]||r["ts"]}));
+      // === Siswa: Master dari Database (Peserta), join Last by id ===
+      const lastSById=new Map(cache.siswaLast.map(r=>[String(r.id||"").trim(), r]));
       const qS=(document.getElementById("filterSiswa").value||"").toLowerCase();
-      const viewS=arrS.filter(r=>(r.id+r.nama).toLowerCase().includes(qS));
-      document.getElementById("tblSiswa").innerHTML=viewS.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
+      const arrS=cache.siswaDb.map(r=>{
+        const id=String(r.id||"").trim(); const last=lastSById.get(id)||{};
+        return {
+          id, nama:r.nama||"", kelas:r.kelas||"",
+          sesi:last.sesi||last.hari_sesi||"",
+          arah:String(last.last_arah||"").toUpperCase(),
+          ts:last.last_ts||last.ts||""
+        };
+      }).filter(r=>(r.id+r.nama+r.kelas).toLowerCase().includes(qS));
+      document.getElementById("tblSiswa").innerHTML=arrS.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
         <td class="py-2 pr-4">${r.id}</td><td class="py-2 pr-4">${r.nama}</td><td class="py-2 pr-4">${r.kelas||"-"}</td><td class="py-2 pr-4">${r.sesi||"-"}</td>
         <td class="py-2 pr-4"><span class="chip ${r.arah==="IN"?"ok":"bad"}">${r.arah||"-"}</span></td><td class="py-2 pr-4">${d?d.toLocaleString():"-"}</td></tr>`;}).join("") || `<tr><td colspan="6" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
 
-      const arrG=cache.guruLast.map(r=>({id:r["id"]||"",nama:r["nama"]||"",unit:r["unit_kelas"]||r["unit"]||r["kelas"]||"",sesi:r["sesi"]||"",arah:(r["last_arah"]||"").toUpperCase(),ts:r["last_ts"]||r["ts"]}));
+      // === Guru: Master dari Database (Pembina), join Last by id ===
+      const lastGById=new Map(cache.guruLast.map(r=>[String(r.id||"").trim(), r]));
       const qG=(document.getElementById("filterGuru").value||"").toLowerCase();
-      const viewG=arrG.filter(r=>(r.id+r.nama).toLowerCase().includes(qG));
-      document.getElementById("tblGuru").innerHTML=viewG.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
+      const arrG=cache.guruDb.map(r=>{
+        const id=String(r.id||"").trim(); const last=lastGById.get(id)||{};
+        return {
+          id, nama:r.nama||"", unit:r.unit_kelas||r.unit||r.kelas||"",
+          sesi:last.sesi||"",
+          arah:String(last.last_arah||"").toUpperCase(),
+          ts:last.last_ts||last.ts||""
+        };
+      }).filter(r=>(r.id+r.nama+r.unit).toLowerCase().includes(qG));
+      document.getElementById("tblGuru").innerHTML=arrG.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
         <td class="py-2 pr-4">${r.id}</td><td class="py-2 pr-4">${r.nama}</td><td class="py-2 pr-4">${r.unit||"-"}</td><td class="py-2 pr-4">${r.sesi||"-"}</td>
         <td class="py-2 pr-4"><span class="chip ${r.arah==="IN"?"ok":"bad"}">${r.arah||"-"}</span></td><td class="py-2 pr-4">${d?d.toLocaleString():"-"}</td></tr>`;}).join("") || `<tr><td colspan="6" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
@@ -634,8 +650,9 @@
     const cmdWrap=document.getElementById("cmdWrap"), cmdInput=document.getElementById("cmdInput"), cmdList=document.getElementById("cmdList");
     let cmdIndex=[];
     function buildCmdIndex(){
-      cmdIndex=[...cache.siswaLast.map(r=>({who:"Siswa", nama:r["nama"], id:r["id"], section:"siswa"})),
-                ...cache.guruLast.map(r=>({who:"Guru",  nama:r["nama"], id:r["id"], section:"guru"}))];
+      // pakai DB agar selalu lengkap
+      cmdIndex=[...cache.siswaDb.map(r=>({who:"Siswa", nama:r["nama"], id:r["id"], section:"siswa"})),
+                ...cache.guruDb.map(r=>({who:"Guru",  nama:r["nama"], id:r["id"], section:"guru"}))];
     }
     function openCmd(){cmdWrap.classList.add("show"); cmdInput.value=""; renderCmd(""); cmdInput.focus();}
     function closeCmd(){cmdWrap.classList.remove("show");}
@@ -689,3 +706,4 @@
   </script>
 </body>
 </html>
+ 
