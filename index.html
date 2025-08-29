@@ -12,60 +12,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --bg:#0b0f1c; --panel:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --bdr:rgba(255,255,255,.10); --card-bdr:rgba(255,255,255,.16);
-      --accent:#b45309; --accent2:#22c55e; --accent3:#a78bfa;
-      color-scheme: dark;
-    }
-    .theme-light{
-      --bg:#f6f8fb; --panel:#ffffff; --text:#0f172a; --muted:#64748b; --bdr:rgba(15,23,42,.08); --card-bdr:rgba(15,23,42,.14);
-      color-scheme: light;
-    }
+    :root{ --bg:#0b0f1c; --panel:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --bdr:rgba(255,255,255,.10); --card-bdr:rgba(255,255,255,.16);
+      --accent:#b45309; --accent2:#22c55e; --accent3:#a78bfa; color-scheme: dark; }
+    .theme-light{ --bg:#f6f8fb; --panel:#ffffff; --text:#0f172a; --muted:#64748b; --bdr:rgba(15,23,42,.08); --card-bdr:rgba(15,23,42,.14); color-scheme: light; }
 
     html,body{height:100%}
-    body{
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      color:var(--text);
-      background:
-        radial-gradient(900px 480px at 8% -10%, rgba(180,83,9,.15), transparent 60%),
-        radial-gradient(800px 460px at 100% -10%, rgba(167,139,250,.17), transparent 60%),
-        var(--bg);
-      overflow:hidden; transition:background .3s ease,color .3s ease;
-    }
+    body{ font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; color:var(--text);
+      background: radial-gradient(900px 480px at 8% -10%, rgba(180,83,9,.15), transparent 60%),
+                  radial-gradient(800px 460px at 100% -10%, rgba(167,139,250,.17), transparent 60%), var(--bg);
+      overflow:hidden; transition:background .3s ease,color .3s ease; }
 
-    /* soft glow blobs */
     .decor{position:fixed; inset:auto; pointer-events:none; z-index:-1; filter:blur(40px); opacity:.55; mix-blend-mode:screen; animation:float 16s ease-in-out infinite}
     .decor.d2{animation-duration:20s; animation-delay:-4s}
     .decor.d3{animation-duration:24s; animation-delay:-8s}
     @keyframes float{0%,100%{transform:translateY(0) translateX(0)} 50%{transform:translateY(-28px) translateX(12px)}}
 
-    /* gradient rope border */
     .rope{position:relative;border-radius:20px;overflow:hidden;isolation:isolate;background:var(--panel);border:1px solid var(--card-bdr)}
-    .rope::after{
-      content:"";position:absolute;inset:0;padding:1px;border-radius:inherit;
+    .rope::after{content:"";position:absolute;inset:0;padding:1px;border-radius:inherit;
       background:conic-gradient(from 0deg at 50% 50%, var(--accent), var(--accent3), var(--accent2), var(--accent));
-      background-size:200% 200%;
-      animation:borderRun 16s linear infinite;
-      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite:xor; mask-composite:exclude;
-      pointer-events:none;   /* penting: biar overlay border gak menutup input */
-      z-index:0;
-    }
+      background-size:200% 200%; animation:borderRun 16s linear infinite;
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; z-index:0;}
     .rope>*{position:relative; z-index:1;}
     @keyframes borderRun{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-    /* cards micro-interactions */
     .card{transition:transform .35s ease, box-shadow .35s ease, background .2s ease}
     .card:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.18)}
     .divider{border-color:var(--bdr)}
 
-    /* chips */
     .chip{display:inline-flex;align-items:center;gap:.5rem;padding:.25rem .6rem;border-radius:999px;font-size:.75rem;border:1px solid var(--bdr);color:var(--muted);background:rgba(148,163,184,.10)}
     .ok{color:#16a34a;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3)}
     .bad{color:#dc2626;background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35)}
     .warn{color:#a16207;background:rgba(234,179,8,.12);border-color:rgba(234,179,8,.35)}
 
-    /* transitions & skeleton */
     .page{opacity:0;transform:translateY(8px);transition:opacity .35s ease,transform .35s ease}
     .page.active{opacity:1;transform:translateY(0)}
     .skeleton{position:relative;overflow:hidden;background:rgba(148,163,184,.12)}
@@ -73,16 +51,13 @@
     .skeleton::after{content:"";position:absolute;inset:0;translate:-100% 0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);animation:shine 1.6s linear infinite}
     @keyframes shine{to{translate:100% 0}}
 
-    /* scrollbar */
     ::-webkit-scrollbar{height:10px;width:10px}
     ::-webkit-scrollbar-thumb{background:rgba(148,163,184,.25);border-radius:20px}
     ::-webkit-scrollbar-track{background:transparent}
 
-    /* toast */
     .toast{position:fixed;right:16px;bottom:16px;z-index:50;transform:translateY(16px);opacity:0;transition:all .25s ease}
     .toast.show{transform:translateY(0);opacity:1}
 
-    /* command palette */
     .cmd-backdrop{position:fixed;inset:0;background:#0006;backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding-top:10vh;z-index:50}
     .cmd{width:min(800px,90vw);border-radius:16px;background:var(--panel);border:1px solid var(--card-bdr);overflow:hidden}
     .cmd-backdrop.show{display:flex}
@@ -123,10 +98,10 @@
         <div class="text-[11px] uppercase tracking-widest text-[color:var(--muted)] mt-4">Master Data</div>
         <a data-route="siswa" class="block rope card p-3.5"><div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 20a8 8 0 1116 0H4z"/></svg>
-          <div><div class="font-semibold">Siswa</div><div class="text-xs text-[color:var(--muted)]">Database (Peserta) + Last</div></div></div></a>
+          <div><div class="font-semibold">Siswa</div><div class="text-xs text-[color:var(--muted)]">Pairs & Last</div></div></div></a>
         <a data-route="guru" class="block rope card p-3.5"><div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-fuchsia-400" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11a4 4 0 100-8 4 4 0 000 8zM2 20v-1c0-3.866 3.582-7 8-7"/></svg>
-          <div><div class="font-semibold">Guru / Pembina</div><div class="text-xs text-[color:var(--muted)]">Database (Pembina) + Last</div></div></div></a>
+          <div><div class="font-semibold">Guru / Pembina</div><div class="text-xs text-[color:var(--muted)]">Pairs & Last</div></div></div></a>
 
         <div class="text-[11px] uppercase tracking-widest text-[color:var(--muted)] mt-4">Rekapitulasi</div>
         <a data-route="outside" class="block rope card p-3.5"><div class="flex items-center gap-2">
@@ -207,7 +182,7 @@
         <div class="rope card p-4">
           <div class="flex items-center justify-between gap-3">
             <input id="filterSiswa" placeholder="Cari nama / id…" class="w-64 max-w-full px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg outline-none focus:border-amber-400 transition" />
-            <span class="text-xs text-[color:var(--muted)]">Sumber: Database (Peserta) + Last (opsional)</span>
+            <span class="text-xs text-[color:var(--muted)]">Sumber: Last (Siswa)</span>
           </div>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm">
@@ -224,7 +199,7 @@
         <div class="rope card p-4">
           <div class="flex items-center justify-between gap-3">
             <input id="filterGuru" placeholder="Cari nama / id…" class="w-64 max-w-full px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg outline-none focus:border-amber-400 transition" />
-            <span class="text-xs text-[color:var(--muted)]">Sumber: Database (Pembina) + Last (opsional)</span>
+            <span class="text-xs text-[color:var(--muted)]">Sumber: Last (Guru)</span>
           </div>
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm">
@@ -261,11 +236,23 @@
         <h2 class="text-xl font-bold">Database</h2>
         <div class="grid lg:grid-cols-2 gap-4">
           <div class="rope card p-4">
-            <div class="flex items-center justify-between gap-3"><h3 class="font-semibold">Peserta (Siswa)</h3><input id="filterPeserta" placeholder="Cari siswa…" class="w-56 px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></div>
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-semibold">Peserta (Siswa)</h3>
+              <div class="flex items-center gap-2">
+                <input id="filterPeserta" placeholder="Cari siswa…" class="w-56 px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" />
+                <span class="text-[10px] text-[color:var(--muted)]">Sumber: Sheet “Peserta”</span>
+              </div>
+            </div>
             <div class="mt-3 overflow-x-auto"><table class="w-full text-sm"><thead class="text-[color:var(--muted)]"><tr class="text-left border-b divider"><th class="py-2 pr-3">ID</th><th class="py-2 pr-3">Nama</th><th class="py-2 pr-3">Kelas</th></tr></thead><tbody id="tblPeserta"><tr><td colspan="3"><div class="h-10 skeleton rounded-md mt-2"></div></td></tr></tbody></table></div>
           </div>
           <div class="rope card p-4">
-            <div class="flex items-center justify-between gap-3"><h3 class="font-semibold">Pembina (Guru)</h3><input id="filterPembina" placeholder="Cari guru…" class="w-56 px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></div>
+            <div class="flex items-center justify-between gap-3">
+              <h3 class="font-semibold">Pembina (Guru)</h3>
+              <div class="flex items-center gap-2">
+                <input id="filterPembina" placeholder="Cari guru…" class="w-56 px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" />
+                <span class="text-[10px] text-[color:var(--muted)]">Sumber: Sheet “Pembina”</span>
+              </div>
+            </div>
             <div class="mt-3 overflow-x-auto"><table class="w-full text-sm"><thead class="text-[color:var(--muted)]"><tr class="text-left border-b divider"><th class="py-2 pr-3">ID</th><th class="py-2 pr-3">Nama</th><th class="py-2 pr-3">Unit</th></tr></thead><tbody id="tblPembina"><tr><td colspan="3"><div class="h-10 skeleton rounded-md mt-2"></div></td></tr></tbody></table></div>
           </div>
         </div>
@@ -291,9 +278,13 @@
         <h2 class="text-xl font-bold">Riwayat Aktivitas</h2>
         <div class="rope card p-4">
           <div class="flex flex-wrap items-center gap-2">
-            <select id="filterTipe" class="px-3 py-2 text-sm rounded-lg bg-white/5 theme-light:bg-slate-100 border divider"><option value="ALL">Semua</option><option value="SISWA">Siswa</option><option value="GURU">Guru</option></select>
-            <select id="filterArah" class="px-3 py-2 text-sm rounded-lg bg-white/5 theme-light:bg-slate-100 border divider"><option value="ALL">IN & OUT</option><option value="IN">IN</option><option value="OUT">OUT</option></select>
-            <span class="text-xs text-[color:var(--muted)]">Sumber: Log → fallback Pairs</span>
+            <select id="filterTipe" class="px-3 py-2 text-sm rounded-lg bg-white/5 theme-light:bg-slate-100 border divider">
+              <option value="ALL">Semua</option><option value="SISWA">Siswa</option><option value="GURU">Guru</option>
+            </select>
+            <select id="filterArah" class="px-3 py-2 text-sm rounded-lg bg-white/5 theme-light:bg-slate-100 border divider">
+              <option value="ALL">IN & OUT</option><option value="IN">IN</option><option value="OUT">OUT</option>
+            </select>
+            <span class="text-xs text-[color:var(--muted)]">Sumber: Riwayat → fallback Pairs</span>
           </div>
           <div id="listRiwayat" class="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 min-h-[84px]"><div class="h-20 skeleton rounded-xl"></div></div>
         </div>
@@ -324,14 +315,14 @@
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Last (CSV)</div><input id="cfgLastSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Database (Peserta)</div><input id="cfgDbSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL Google Sheets tab Peserta (boleh URL edit)"/></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — State</div><input id="cfgStateSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Riwayat (Log)</div><input id="cfgLogSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
+            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Riwayat (CSV)</div><input id="cfgLogSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL tab Riwayat siswa"/></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Summary</div><input id="cfgSummarySiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <!-- GURU -->
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Pairs (CSV)</div><input id="cfgPairsGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Last (CSV)</div><input id="cfgLastGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Database (Pembina)</div><input id="cfgDbGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL Google Sheets tab Pembina (boleh URL edit)"/></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — State</div><input id="cfgStateGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Riwayat (Log)</div><input id="cfgLogGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
+            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Riwayat (CSV)</div><input id="cfgLogGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL tab Riwayat guru (jika ada)"/></label>
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Summary</div><input id="cfgSummaryGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
             <!-- BRAND -->
             <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">Brand — Nama Sekolah</div><input id="cfgBrandName" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
@@ -365,10 +356,10 @@
     const DEFAULT_CONFIG = {
       siswa:{ pairsUrl:"PUT_SISWA_PAIRS_CSV_URL_HERE", lastUrl:"PUT_SISWA_LAST_CSV_URL_HERE",
               databaseUrl:"PUT_SISWA_DATABASE_PESERTA_SHEET_URL_HERE", stateUrl:"PUT_SISWA_STATE_CSV_URL_HERE",
-              logUrl:"PUT_SISWA_LOG_CSV_URL_HERE", summaryUrl:"PUT_SISWA_SUMMARY_CSV_URL_HERE" },
+              logUrl:"PUT_SISWA_RIWAYAT_CSV_URL_HERE", summaryUrl:"PUT_SISWA_SUMMARY_CSV_URL_HERE" },
       guru :{ pairsUrl:"PUT_GURU_PAIRS_CSV_URL_HERE", lastUrl:"PUT_GURU_LAST_CSV_URL_HERE",
               databaseUrl:"PUT_GURU_DATABASE_PEMBINA_SHEET_URL_HERE", stateUrl:"PUT_GURU_STATE_CSV_URL_HERE",
-              logUrl:"PUT_GURU_LOG_CSV_URL_HERE", summaryUrl:"PUT_GURU_SUMMARY_CSV_URL_HERE" },
+              logUrl:"PUT_GURU_RIWAYAT_CSV_URL_HERE", summaryUrl:"PUT_GURU_SUMMARY_CSV_URL_HERE" },
       brand:{ name:"MI Ma'arif Beton", logo:"" }, theme:"dark"
     };
     const CONFIG = loadConfig();
@@ -388,17 +379,15 @@
     const normKey = k => String(k||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
     function normalizeRow(o){ const out={}; for(const [k,v] of Object.entries(o)) out[normKey(k)] = v; return out; }
 
-    // --- AUTO-KONVERSI LINK GOOGLE SHEETS KE CSV ---
+    // Auto-konversi Google Sheets URL edit -> CSV export
     function toCSVUrl(url){
       if(!url) return url;
       url = url.trim();
-      if(/(?:output=csv|format=csv|tqx=out:csv)/i.test(url)) return url; // sudah CSV
+      if(/(?:output=csv|format=csv|tqx=out:csv)/i.test(url)) return url;
       try{
         const u = new URL(url);
         if(u.hostname === "docs.google.com" && u.pathname.startsWith("/spreadsheets/")){
-          // Bentuk: /d/<id>/edit?gid=xxx  => export?format=csv&gid=xxx
-          const parts = u.pathname.split("/");
-          const idx = parts.indexOf("d");
+          const parts = u.pathname.split("/"); const idx = parts.indexOf("d");
           if(idx !== -1 && parts[idx+1]){
             const id = parts[idx+1];
             const gid = u.searchParams.get("gid") || "0";
@@ -433,7 +422,7 @@
         let settled=false;
         const done = (rows)=>{ if(!settled){ settled=true; resolve((rows||[]).map(normalizeRow)); } };
         Papa.parse(url,{download:true,header:true,skipEmptyLines:true,complete:r=>done(r.data||[]),error:()=>done([])});
-        setTimeout(()=>done([]), 12000); // bailout 12s
+        setTimeout(()=>done([]), 12000);
       });
     }
 
@@ -477,6 +466,27 @@
       }finally{ setSkeleton(false); }
     }
 
+    /* ===== Helpers untuk RIWAYAT (baca dari sheet Riwayat atau Log) ===== */
+    function expandRiwayatRows(rows, who){
+      // rows bisa format LOG (kolom: arah, ts) atau RIWAYAT (kolom: out_ts, in_ts, durasi)
+      const out=[];
+      for(const r of rows){
+        const nama=r["nama"]||""; const id=r["id"]||"";
+        const sesi=r["sesi"]||r["hari_sesi"]||"";
+        const kelas=r["kelas"]||r["unit_kelas"]||r["unit"]||"";
+        const hasInOut = (r["in_ts"]||r["out_ts"]);
+        if(hasInOut){
+          if(r["out_ts"]) out.push({who, nama, id, arah:"OUT", ts:r["out_ts"], sesi, kelas});
+          if(r["in_ts"])  out.push({who, nama, id, arah:"IN",  ts:r["in_ts"],  sesi, kelas});
+        }else{
+          const arah = (r["arah"]||r["last_arah"]||"").toUpperCase();
+          const ts   = r["ts"]||r["in_ts"]||r["out_ts"]||r["last_ts"]||"";
+          if(ts) out.push({who, nama, id, arah, ts, sesi, kelas});
+        }
+      }
+      return out.filter(x=>x.ts);
+    }
+
     /* ========== RENDER ========== */
     function renderAll(){ brandApply(); applyTheme(); renderDashboard(); renderTables(); renderOutside(); renderDatabase(); renderState(); renderRiwayat(); renderSummary(); buildCmdIndex(); }
 
@@ -504,51 +514,45 @@
       document.getElementById("barIn").style.width    = pct(inside)+"%";
       document.getElementById("barOut").style.width   = pct(outside)+"%";
 
-      const recent=[].concat((cache.siswaLog.length?cache.siswaLog:cache.siswaPairs).map(r=>({type:"Siswa",nama:r["nama"],arah:(r["arah"]||r["last_arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||r["last_ts"]})))
-                      .concat((cache.guruLog.length?cache.guruLog:cache.guruPairs).map(r=>({type:"Guru",nama:r["nama"],arah:(r["arah"]||r["last_arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||r["last_ts"]})))
-                      .filter(x=>x.ts).sort((a,b)=>parseTS(b.ts)-parseTS(a.ts)).slice(0,20);
+      // ==== Aktivitas terbaru: pakai Riwayat jika ada, kalau kosong fallback Pairs ====
+      let events=[];
+      if(cache.siswaLog.length || cache.guruLog.length){
+        events = expandRiwayatRows(cache.siswaLog,"Siswa").concat(expandRiwayatRows(cache.guruLog,"Guru"));
+      }else{
+        // fallback dari pairs (biasanya 1 event per baris)
+        const s = cache.siswaPairs.map(r=>({who:"Siswa",nama:r["nama"],arah:(r["arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||""}));
+        const g = cache.guruPairs .map(r=>({who:"Guru", nama:r["nama"],arah:(r["arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||""}));
+        events = s.concat(g).filter(x=>x.ts);
+      }
+      events.sort((a,b)=>parseTS(b.ts)-parseTS(a.ts));
+      const recent=events.slice(0,20);
+
       const cont=document.getElementById("recent");
       cont.innerHTML=recent.map((x,i)=>{const d=parseTS(x.ts);
-        const icon=x.type==="Siswa"
+        const icon=x.who==="Siswa"
           ? "<svg class=\"h-4 w-4 text-sky-400\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 12a4 4 0 100-8 4 4 0 000 8zM4 20a8 8 0 1116 0H4z\"/></svg>"
           : "<svg class=\"h-4 w-4 text-fuchsia-400\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M16 11a4 4 0 100-8 4 4 0 000 8zM2 20v-1c0-3.866 3.582-7 8-7\"/></svg>";
+        const arah = (x.arah||"-").toUpperCase();
+        const chip = arah==="IN"?"ok":(arah==="OUT"?"bad":"");
         return `<div class="rope card p-3 [animation:fade_.45s_ease_forwards] opacity-0" style="animation-delay:${i*25}ms">
-            <div class="flex items-center justify-between"><div class="flex items-center gap-2">${icon}<div class="text-sm font-semibold">${x.nama||"-"}</div></div><span class="chip ${x.arah==="IN"?"ok":"bad"}">${x.arah||"-"}</span></div>
-            <div class="text-[11px] text-[color:var(--muted)] mt-1">${x.type} • ${d?d.toLocaleString():"-"}</div>
+            <div class="flex items-center justify-between"><div class="flex items-center gap-2">${icon}<div class="text-sm font-semibold">${x.nama||"-"}</div></div><span class="chip ${chip}">${arah}</span></div>
+            <div class="text-[11px] text-[color:var(--muted)] mt-1">${x.who} • ${d?d.toLocaleString():"-"}</div>
         </div>`;
       }).join("") || `<div class="text-sm text-[color:var(--muted)]">Belum ada data.</div>`;
     }
 
     function renderTables(){
-      // === Siswa: Master dari Database (Peserta), join Last by id ===
-      const lastSById=new Map(cache.siswaLast.map(r=>[String(r.id||"").trim(), r]));
+      const arrS=cache.siswaLast.map(r=>({id:r["id"]||"",nama:r["nama"]||"",kelas:r["kelas"]||"",sesi:r["sesi"]||r["hari_sesi"]||"",arah:(r["last_arah"]||"").toUpperCase(),ts:r["last_ts"]||r["ts"]}));
       const qS=(document.getElementById("filterSiswa").value||"").toLowerCase();
-      const arrS=cache.siswaDb.map(r=>{
-        const id=String(r.id||"").trim(); const last=lastSById.get(id)||{};
-        return {
-          id, nama:r.nama||"", kelas:r.kelas||"",
-          sesi:last.sesi||last.hari_sesi||"",
-          arah:String(last.last_arah||"").toUpperCase(),
-          ts:last.last_ts||last.ts||""
-        };
-      }).filter(r=>(r.id+r.nama+r.kelas).toLowerCase().includes(qS));
-      document.getElementById("tblSiswa").innerHTML=arrS.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
+      const viewS=arrS.filter(r=>(r.id+r.nama).toLowerCase().includes(qS));
+      document.getElementById("tblSiswa").innerHTML=viewS.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
         <td class="py-2 pr-4">${r.id}</td><td class="py-2 pr-4">${r.nama}</td><td class="py-2 pr-4">${r.kelas||"-"}</td><td class="py-2 pr-4">${r.sesi||"-"}</td>
         <td class="py-2 pr-4"><span class="chip ${r.arah==="IN"?"ok":"bad"}">${r.arah||"-"}</span></td><td class="py-2 pr-4">${d?d.toLocaleString():"-"}</td></tr>`;}).join("") || `<tr><td colspan="6" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
 
-      // === Guru: Master dari Database (Pembina), join Last by id ===
-      const lastGById=new Map(cache.guruLast.map(r=>[String(r.id||"").trim(), r]));
+      const arrG=cache.guruLast.map(r=>({id:r["id"]||"",nama:r["nama"]||"",unit:r["unit_kelas"]||r["unit"]||r["kelas"]||"",sesi:r["sesi"]||"",arah:(r["last_arah"]||"").toUpperCase(),ts:r["last_ts"]||r["ts"]}));
       const qG=(document.getElementById("filterGuru").value||"").toLowerCase();
-      const arrG=cache.guruDb.map(r=>{
-        const id=String(r.id||"").trim(); const last=lastGById.get(id)||{};
-        return {
-          id, nama:r.nama||"", unit:r.unit_kelas||r.unit||r.kelas||"",
-          sesi:last.sesi||"",
-          arah:String(last.last_arah||"").toUpperCase(),
-          ts:last.last_ts||last.ts||""
-        };
-      }).filter(r=>(r.id+r.nama+r.unit).toLowerCase().includes(qG));
-      document.getElementById("tblGuru").innerHTML=arrG.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
+      const viewG=arrG.filter(r=>(r.id+r.nama).toLowerCase().includes(qG));
+      document.getElementById("tblGuru").innerHTML=viewG.map((r,i)=>{const d=parseTS(r.ts);return `<tr class="border-b divider [animation:fade_.35s_ease_forwards] opacity-0" style="animation-delay:${i*12}ms">
         <td class="py-2 pr-4">${r.id}</td><td class="py-2 pr-4">${r.nama}</td><td class="py-2 pr-4">${r.unit||"-"}</td><td class="py-2 pr-4">${r.sesi||"-"}</td>
         <td class="py-2 pr-4"><span class="chip ${r.arah==="IN"?"ok":"bad"}">${r.arah||"-"}</span></td><td class="py-2 pr-4">${d?d.toLocaleString():"-"}</td></tr>`;}).join("") || `<tr><td colspan="6" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
@@ -594,16 +598,23 @@
     }
 
     function renderRiwayat(){
-      const prefer=(log,pairs,who)=>(log.length?log:pairs).map(r=>({who,nama:r["nama"]||"",id:r["id"]||"",arah:(r["arah"]||r["last_arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||r["last_ts"]||"",sesi:r["sesi"]||"",kelas:r["kelas"]||r["unit_kelas"]||r["unit"]||""}));
-      let rows=prefer(cache.siswaLog,cache.siswaPairs,"SISWA").concat(prefer(cache.guruLog,cache.guruPairs,"GURU")).filter(x=>x.ts).sort((a,b)=>parseTS(b.ts)-parseTS(a.ts)).slice(0,200);
+      // Gunakan sheet Riwayat (CONFIG.*.logUrl) jika ada, fallback ke Pairs
+      let rows = expandRiwayatRows(cache.siswaLog,"SISWA").concat(expandRiwayatRows(cache.guruLog,"GURU"));
+      if(rows.length===0){
+        rows = expandRiwayatRows(cache.siswaPairs.map(r=>({nama:r["nama"],id:r["id"],arah:r["arah"],ts:r["ts"],sesi:r["sesi"],kelas:r["kelas"]})),"SISWA")
+             .concat(expandRiwayatRows(cache.guruPairs .map(r=>({nama:r["nama"],id:r["id"],arah:r["arah"],ts:r["ts"],sesi:r["sesi"],kelas:r["unit_kelas"]||r["unit"]})),"GURU"));
+      }
+      rows = rows.filter(x=>x.ts).sort((a,b)=>parseTS(b.ts)-parseTS(a.ts)).slice(0,200);
+
       const t=document.getElementById("listRiwayat"), type=document.getElementById("filterTipe").value, arah=document.getElementById("filterArah").value;
       const view=rows.filter(r=>(type==="ALL"||r.who===type)&&(arah==="ALL"||r.arah===arah)).slice(0,60);
+
       t.innerHTML=view.map((x,i)=>{const d=parseTS(x.ts); const icon=x.who==="SISWA"
         ? "<svg class=\"h-4 w-4 text-sky-400\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 12a4 4 0 100-8 4 4 0 000 8zM4 20a8 8 0 1116 0H4z\"/></svg>"
         : "<svg class=\"h-4 w-4 text-fuchsia-400\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M16 11a4 4 0 100-8 4 4 0 000 8zM2 20v-1c0-3.866 3.582-7 8-7\"/></svg>";
         return `<div class="rope card p-3 [animation:fade_.4s_ease_forwards] opacity-0" style="animation-delay:${i*18}ms">
           <div class="flex items-center justify-between"><div class="flex items-center gap-2">${icon}<div class="font-semibold text-sm">${x.nama||"-"}</div></div><span class="chip ${x.arah==="IN"?"ok":"bad"}">${x.arah||"-"}</span></div>
-          <div class="text-[11px] text-[color:var(--muted)] mt-1">${x.who} • ${x.kelas||"-"} • ${x.sesi||"-"} • ${d?d.toLocaleString():"-"}</div>
+          <div class="text-[11px] text-[color:var(--muted)] mt-1">${x.who} • ${(x.kelas||"-")} • ${(x.sesi||"-")} • ${d?d.toLocaleString():"-"}</div>
         </div>`;
       }).join("") || `<div class="text-sm text-[color:var(--muted)]">Tidak ada riwayat yang cocok.</div>`;
     }
@@ -650,19 +661,16 @@
     const cmdWrap=document.getElementById("cmdWrap"), cmdInput=document.getElementById("cmdInput"), cmdList=document.getElementById("cmdList");
     let cmdIndex=[];
     function buildCmdIndex(){
-      // pakai DB agar selalu lengkap
-      cmdIndex=[...cache.siswaDb.map(r=>({who:"Siswa", nama:r["nama"], id:r["id"], section:"siswa"})),
-                ...cache.guruDb.map(r=>({who:"Guru",  nama:r["nama"], id:r["id"], section:"guru"}))];
+      cmdIndex=[...cache.siswaLast.map(r=>({who:"Siswa", nama:r["nama"], id:r["id"], section:"siswa"})),
+                ...cache.guruLast.map(r=>({who:"Guru",  nama:r["nama"], id:r["id"], section:"guru"}))];
     }
     function openCmd(){cmdWrap.classList.add("show"); cmdInput.value=""; renderCmd(""); cmdInput.focus();}
     function closeCmd(){cmdWrap.classList.remove("show");}
     function renderCmd(q){
       q=q.toLowerCase();
-      const shortcuts=[
-        {label:"Dashboard",section:"dashboard"},{label:"Siswa",section:"siswa"},{label:"Guru",section:"guru"},
+      const shortcuts=[{label:"Dashboard",section:"dashboard"},{label:"Siswa",section:"siswa"},{label:"Guru",section:"guru"},
         {label:"Masih di Luar",section:"outside"},{label:"Database",section:"database"},
-        {label:"State",section:"state"},{label:"Riwayat",section:"riwayat"},{label:"Summary",section:"summary"},{label:"Konfigurasi",section:"konfigurasi"}
-      ];
+        {label:"State",section:"state"},{label:"Riwayat",section:"riwayat"},{label:"Summary",section:"summary"},{label:"Konfigurasi",section:"konfigurasi"}];
       const people=cmdIndex.filter(x=>(x.nama+x.id+x.who).toLowerCase().includes(q)).slice(0,8);
       const menu=shortcuts.filter(x=>x.label.toLowerCase().includes(q));
       cmdList.innerHTML=[...menu.map(m=>`<button class="w-full text-left px-3 py-2 hover:bg-white/5 rounded flex items-center justify-between" data-go="${m.section}"><span>${m.label}</span><span class="text-[11px] text-[color:var(--muted)]">menu</span></button>`),
@@ -706,4 +714,3 @@
   </script>
 </body>
 </html>
- 
