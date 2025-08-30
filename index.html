@@ -224,7 +224,7 @@
         </div>
       </section>
 
-      <!-- OUTSIDE -->
+      <!-- OUTSIDE (pakai sheet State) -->
       <section id="page-outside" class="page hidden space-y-4">
         <h2 class="text-xl font-bold">Masih di Luar</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -245,7 +245,7 @@
         </div>
       </section>
 
-      <!-- STATE -->
+      <!-- STATE (prioritas State, fallback Last) -->
       <section id="page-state" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">State (Posisi Sekarang)</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -533,32 +533,111 @@
         `<tr><td colspan="3" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
+    // ======= MASIH DI LUAR (prioritas State) =======
     function renderOutside(){
-      const sOut=cache.siswaLast.map(r=>({id:r["id"]||"",nama:r["nama"]||"",kelas:r["kelas"]||"",sesi:r["sesi"]||r["hari_sesi"]||"",arah:(r["last_arah"]||"").toUpperCase(),ts:parseTS(r["last_ts"]||r["ts"])})).filter(x=>x.arah==="OUT").sort((a,b)=>b.ts-a.ts);
+      // --- Siswa
+      let sState = cache.siswaState.map(r=>({
+        id: r["id"]||"",
+        nama: r["nama"]||"",
+        kelas: r["kelas"]||"",
+        sesi: r["sesi"]||r["hari_sesi"]||"",
+        sejak_out: r["sejak_out"]||"",
+        sejak_in: r["sejak_in"]||"",
+        status: (r["status"]||"").toUpperCase()
+      }));
+      if(!sState.length){
+        // fallback dari Last bila State kosong
+        sState = cache.siswaLast.map(r=>({
+          id:r["id"]||"", nama:r["nama"]||"", kelas:r["kelas"]||"", sesi:r["sesi"]||r["hari_sesi"]||"",
+          sejak_out: (r["last_arah"]||"").toUpperCase()==="OUT" ? (r["last_ts"]||"") : "",
+          sejak_in : (r["last_arah"]||"").toUpperCase()==="IN"  ? (r["last_ts"]||"") : "",
+          status: (r["last_arah"]||"").toUpperCase()==="IN"?"DI DALAM":"DI LUAR"
+        }));
+      }
+      const sOut = sState.filter(r=>{
+        if(r.status) return r.status.includes("LUAR");
+        const tOut=parseTS(r.sejak_out), tIn=parseTS(r.sejak_in);
+        return tOut && (!tIn || tOut > tIn);
+      }).map(r=>({...r, ts: parseTS(r.sejak_out)}))
+        .sort((a,b)=> (b.ts||0)-(a.ts||0));
+
       document.getElementById("badgeSiswaOut").textContent=sOut.length;
       document.getElementById("tblSiswaOut").innerHTML=sOut.map((x,i)=>`<tr class="border-b divider [animation:fade_.3s_ease_forwards] opacity-0" style="animation-delay:${i*10}ms">
-        <td class="py-2 pr-3">${x.id}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.kelas||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
+        <td class="py-2 pr-3">${x.id||"-"}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.kelas||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua siswa berada di dalam ✅</td></tr>`;
 
-      const gOut=cache.guruLast.map(r=>({id:r["id"]||"",nama:r["nama"]||"",unit:r["unit_kelas"]||r["unit"]||"",sesi:r["sesi"]||"",arah:(r["last_arah"]||"").toUpperCase(),ts:parseTS(r["last_ts"]||r["ts"])})).filter(x=>x.arah==="OUT").sort((a,b)=>b.ts-a.ts);
+      // --- Guru
+      let gState = cache.guruState.map(r=>({
+        id:r["id"]||"",
+        nama:r["nama"]||"",
+        unit:r["unit_kelas"]||r["unit"]||"",
+        sesi:r["sesi"]||"",
+        sejak_out:r["sejak_out"]||"",
+        sejak_in:r["sejak_in"]||"",
+        status:(r["status"]||"").toUpperCase()
+      }));
+      if(!gState.length){
+        gState = cache.guruLast.map(r=>({
+          id:r["id"]||"", nama:r["nama"]||"", unit:r["unit_kelas"]||r["unit"]||"", sesi:r["sesi"]||"",
+          sejak_out:(r["last_arah"]||"").toUpperCase()==="OUT" ? (r["last_ts"]||"") : "",
+          sejak_in :(r["last_arah"]||"").toUpperCase()==="IN"  ? (r["last_ts"]||"") : "",
+          status:(r["last_arah"]||"").toUpperCase()==="IN"?"DI DALAM":"DI LUAR"
+        }));
+      }
+      const gOut = gState.filter(r=>{
+        if(r.status) return r.status.includes("LUAR");
+        const tOut=parseTS(r.sejak_out), tIn=parseTS(r.sejak_in);
+        return tOut && (!tIn || tOut > tIn);
+      }).map(r=>({...r, ts: parseTS(r.sejak_out)}))
+        .sort((a,b)=> (b.ts||0)-(a.ts||0));
+
       document.getElementById("badgeGuruOut").textContent=gOut.length;
       document.getElementById("tblGuruOut").innerHTML=gOut.map((x,i)=>`<tr class="border-b divider [animation:fade_.3s_ease_forwards] opacity-0" style="animation-delay:${i*10}ms">
-        <td class="py-2 pr-3">${x.id}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.unit||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
+        <td class="py-2 pr-3">${x.id||"-"}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.unit||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua guru berada di dalam ✅</td></tr>`;
     }
 
+    // ======= STATE (prioritas State, fallback Last) =======
     function renderState(){
-      let s=cache.siswaState;
-      if(!s.length) s=cache.siswaLast.map(r=>({"nama":r["nama"],"kelas":r["kelas"],"sesi":r["sesi"]||"","sejak_out":(r["last_arah"]||"").toUpperCase()==="OUT"?r["last_ts"]:"","sejak_in":(r["last_arah"]||"").toUpperCase()==="IN"?r["last_ts"]:"","status":(r["last_arah"]||"").toUpperCase()==="IN"?"DI DALAM":"DI LUAR"}));
-      document.getElementById("tblStateSiswa").innerHTML=s.map((r,i)=>{const since=parseTS(r["sejak_out"]||r["sejak_in"]||""); const st=(r["status"]||"").toUpperCase(); const chip=st==="DI DALAM"?"ok":"bad";
-        return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r["nama"]||"-"}</td><td class="py-2 pr-3">${r["kelas"]||"-"}</td><td class="py-2 pr-3">${r["sesi"]||"-"}</td><td class="py-2 pr-3">${since?fmtSince(since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${st||"-"}</span></td></tr>`;}).join("") ||
-        `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
+      // --- Siswa
+      let s=cache.siswaState.map(r=>{
+        const status=(r["status"]||"").toUpperCase();
+        const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
+        let st=status; if(!st){ st = tOut && (!tIn || tOut>tIn) ? "DI LUAR" : (tIn ? "DI DALAM" : "-"); }
+        const since = st.includes("LUAR") ? (tOut||null) : (tIn||null);
+        return { nama:r["nama"]||"-", kelas:r["kelas"]||"-", sesi:r["sesi"]||r["hari_sesi"]||"-", since, st };
+      });
+      if(!s.length){
+        s=cache.siswaLast.map(r=>{
+          const arah=(r["last_arah"]||"").toUpperCase();
+          const t=parseTS(r["last_ts"]);
+          return { nama:r["nama"]||"-", kelas:r["kelas"]||"-", sesi:r["sesi"]||r["hari_sesi"]||"-", since:t, st:arah==="IN"?"DI DALAM":"DI LUAR" };
+        });
+      }
+      document.getElementById("tblStateSiswa").innerHTML=s.map((r,i)=>{
+        const chip=r.st.includes("DALAM")?"ok":"bad";
+        return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r.nama}</td><td class="py-2 pr-3">${r.kelas}</td><td class="py-2 pr-3">${r.sesi}</td><td class="py-2 pr-3">${r.since?fmtSince(r.since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${r.st}</span></td></tr>`;
+      }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
 
-      let g=cache.guruState;
-      if(!g.length) g=cache.guruLast.map(r=>({"nama":r["nama"],"unit_kelas":r["unit_kelas"]||r["unit"]||"","sesi":r["sesi"]||"","sejak_out":(r["last_arah"]||"").toUpperCase()==="OUT"?r["last_ts"]:"","sejak_in":(r["last_arah"]||"").toUpperCase()==="IN"?r["last_ts"]:"","status":(r["last_arah"]||"").toUpperCase()==="IN"?"DI DALAM":"DI LUAR"}));
-      document.getElementById("tblStateGuru").innerHTML=g.map((r,i)=>{const since=parseTS(r["sejak_out"]||r["sejak_in"]||""); const st=(r["status"]||"").toUpperCase(); const chip=st==="DI DALAM"?"ok":"bad";
-        return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r["nama"]||"-"}</td><td class="py-2 pr-3">${r["unit_kelas"]||r["unit"]||"-"}</td><td class="py-2 pr-3">${r["sesi"]||"-"}</td><td class="py-2 pr-3">${since?fmtSince(since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${st||"-"}</span></td></tr>`;}).join("") ||
-        `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
+      // --- Guru
+      let g=cache.guruState.map(r=>{
+        const status=(r["status"]||"").toUpperCase();
+        const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
+        let st=status; if(!st){ st = tOut && (!tIn || tOut>tIn) ? "DI LUAR" : (tIn ? "DI DALAM" : "-"); }
+        const since = st.includes("LUAR") ? (tOut||null) : (tIn||null);
+        return { nama:r["nama"]||"-", unit:r["unit_kelas"]||r["unit"]||"-", sesi:r["sesi"]||"-", since, st };
+      });
+      if(!g.length){
+        g=cache.guruLast.map(r=>{
+          const arah=(r["last_arah"]||"").toUpperCase();
+          const t=parseTS(r["last_ts"]);
+          return { nama:r["nama"]||"-", unit:r["unit_kelas"]||r["unit"]||"-", sesi:r["sesi"]||"-", since:t, st:arah==="IN"?"DI DALAM":"DI LUAR" };
+        });
+      }
+      document.getElementById("tblStateGuru").innerHTML=g.map((r,i)=>{
+        const chip=r.st.includes("DALAM")?"ok":"bad";
+        return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r.nama}</td><td class="py-2 pr-3">${r.unit}</td><td class="py-2 pr-3">${r.sesi}</td><td class="py-2 pr-3">${r.since?fmtSince(r.since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${r.st}</span></td></tr>`;
+      }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
     // ======= RIWAYAT (one row per entry from sheet Riwayat) =======
