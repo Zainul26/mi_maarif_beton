@@ -361,15 +361,51 @@
   <script>
     /* ========== CONFIG ========== */
     const DEFAULT_CONFIG = {
-      siswa:{ pairsUrl:"PUT_SISWA_PAIRS_CSV_URL_HERE", lastUrl:"PUT_SISWA_LAST_CSV_URL_HERE",
-              databaseUrl:"PUT_SISWA_DATABASE_PESERTA_SHEET_URL_HERE", stateUrl:"PUT_SISWA_STATE_CSV_URL_HERE",
-              logUrl:"PUT_SISWA_RIWAYAT_SHEET_URL_HERE", summaryUrl:"PUT_SISWA_SUMMARY_CSV_URL_HERE" },
-      guru :{ pairsUrl:"PUT_GURU_PAIRS_CSV_URL_HERE", lastUrl:"PUT_GURU_LAST_CSV_URL_HERE",
-              databaseUrl:"PUT_GURU_DATABASE_PEMBINA_SHEET_URL_HERE", stateUrl:"PUT_GURU_STATE_CSV_URL_HERE",
-              logUrl:"PUT_GURU_RIWAYAT_SHEET_URL_HERE", summaryUrl:"PUT_GURU_SUMMARY_CSV_URL_HERE" },
-      brand:{ name:"MI Ma'arif Beton", logo:"" }, theme:"dark"
-    };
-    const CONFIG = loadConfig();
+    siswa:{
+      // PUBLISH-TO-WEB (CSV)
+      databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=454613141&single=true&output=csv",
+      pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=863957525&single=true&output=csv",
+      logUrl     :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=2030675972&single=true&output=csv",
+      lastUrl    :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=1843199320&single=true&output=csv",
+      stateUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=272175023&single=true&output=csv",
+      summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=185812388&single=true&output=csv"
+    },
+    guru:{
+      databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=0&single=true&output=csv",
+      pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=616064247&single=true&output=csv",
+      logUrl     :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1682514405&single=true&output=csv",
+      lastUrl    :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=26725297&single=true&output=csv",
+      stateUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=966214747&single=true&output=csv",
+      summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1051073944&single=true&output=csv"
+    },
+    brand:{ name:"MI Ma'arif Beton", logo:"" },
+    theme:"dark"
+  };
+
+  // Deep-merge saved config with DEFAULT_CONFIG (agar first run langsung jalan).
+  function loadConfig(){
+    const saved = JSON.parse(localStorage.getItem("absensi_cfg")||"{}");
+    // helper deep merge
+    const dm = (a,b)=>Object.fromEntries(
+      Object.keys({...a,...b}).map(k=>{
+        const va=a?.[k], vb=b?.[k];
+        if(va && typeof va==="object" && !Array.isArray(va)) return [k, dm(va, vb||{})];
+        return [k, vb!==undefined ? vb : va];
+      })
+    );
+    // jika saved berisi placeholder/empty, abaikan & pakai default
+    const cleaned = JSON.parse(JSON.stringify(saved||{}));
+    const isPlaceholder = v => typeof v==="string" && /^PUT_.*_URL_HERE$/.test(v);
+    ["siswa","guru"].forEach(grp=>{
+      if(!cleaned[grp]) cleaned[grp]={};
+      for(const key of ["databaseUrl","pairsUrl","logUrl","lastUrl","stateUrl","summaryUrl"]){
+        if(!cleaned[grp][key] || isPlaceholder(cleaned[grp][key])) delete cleaned[grp][key];
+      }
+    });
+    return dm(DEFAULT_CONFIG, cleaned);
+  }
+
+  const CONFIG = loadConfig();
 
     /* ========== ROUTER ========== */
     const navLinks=document.querySelectorAll("aside a[data-route]");
@@ -788,3 +824,4 @@
   </script>
 </body>
 </html>
+
