@@ -156,6 +156,12 @@
           <h1 class="text-2xl md:text-3xl font-extrabold leading-tight">Gerbang <span class="text-amber-400">Bumi Perkemahan</span> — Monitoring Kehadiran</h1>
           <p class="text-[color:var(--muted)] mt-1 text-sm">Tema kepramukaan, animasi halus, light/dark mode, dan data real-time dari Spreadsheet.</p>
           <div class="mt-3 flex flex-wrap gap-2"><span class="chip ok">Stabil</span><span class="chip warn">Light/Dark</span><span class="chip">CSV Publish-to-Web</span></div>
+
+          <!-- Tombol cepat ke Spreadsheet Scan -->
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a id="openScanGuru"  class="px-3 py-2 rounded-lg text-sm bg-amber-600/90 hover:bg-amber-500 transition" href="#">Scan Guru / Pembina</a>
+            <a id="openScanSiswa" class="px-3 py-2 rounded-lg text-sm bg-emerald-600/90 hover:bg-emerald-500 transition" href="#">Scan Siswa</a>
+          </div>
         </div>
       </section>
 
@@ -224,7 +230,7 @@
         </div>
       </section>
 
-      <!-- OUTSIDE (pakai sheet State) -->
+      <!-- OUTSIDE -->
       <section id="page-outside" class="page hidden space-y-4">
         <h2 class="text-xl font-bold">Masih di Luar</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -245,7 +251,7 @@
         </div>
       </section>
 
-      <!-- STATE (prioritas State, fallback Last) -->
+      <!-- STATE -->
       <section id="page-state" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">State (Posisi Sekarang)</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -260,7 +266,7 @@
         </div>
       </section>
 
-      <!-- RIWAYAT (sheet Riwayat, satu baris per entri) -->
+      <!-- RIWAYAT -->
       <section id="page-riwayat" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">Riwayat Aktivitas</h2>
         <div class="rope card p-4">
@@ -359,53 +365,62 @@
   <div id="toast" class="toast rope px-4 py-2 text-sm">✅ Data diperbarui</div>
 
   <script>
+    /* ========== LINKS SCAN (Spreadsheet) ========== */
+    const SCAN_LINKS = {
+      guru:  "https://docs.google.com/spreadsheets/d/1P8Cbc4T6srF44Haei2_zED_wrKP7IKQAfZrtIqWgqKY/edit?gid=616064247#gid=616064247",
+      siswa: "https://docs.google.com/spreadsheets/d/1esqkUoXnOjqXS8mg03PDdF1U4S5C8tKRkymIIWoBC-8/edit?gid=1843199320#gid=1843199320"
+    };
+    function openScan(url){ if(!url) return; window.open(url,"_blank","noopener"); }
+    window.addEventListener("DOMContentLoaded",()=>{
+      const g=document.getElementById("openScanGuru");
+      const s=document.getElementById("openScanSiswa");
+      if(g) g.addEventListener("click",(e)=>{e.preventDefault();openScan(SCAN_LINKS.guru);});
+      if(s) s.addEventListener("click",(e)=>{e.preventDefault();openScan(SCAN_LINKS.siswa);});
+    });
+
     /* ========== CONFIG ========== */
     const DEFAULT_CONFIG = {
-    siswa:{
-      // PUBLISH-TO-WEB (CSV)
-      databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=454613141&single=true&output=csv",
-      pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=863957525&single=true&output=csv",
-      logUrl     :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=2030675972&single=true&output=csv",
-      lastUrl    :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=1843199320&single=true&output=csv",
-      stateUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=272175023&single=true&output=csv",
-      summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=185812388&single=true&output=csv"
-    },
-    guru:{
-      databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=0&single=true&output=csv",
-      pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=616064247&single=true&output=csv",
-      logUrl     :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1682514405&single=true&output=csv",
-      lastUrl    :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=26725297&single=true&output=csv",
-      stateUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=966214747&single=true&output=csv",
-      summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1051073944&single=true&output=csv"
-    },
-    brand:{ name:"MI Ma'arif Beton", logo:"" },
-    theme:"dark"
-  };
+      siswa:{
+        databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=454613141&single=true&output=csv",
+        pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=863957525&single=true&output=csv",
+        logUrl     :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=2030675972&single=true&output=csv",
+        lastUrl    :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=1843199320&single=true&output=csv",
+        stateUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=272175023&single=true&output=csv",
+        summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=185812388&single=true&output=csv"
+      },
+      guru:{
+        databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=0&single=true&output=csv",
+        pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=616064247&single=true&output=csv",
+        logUrl     :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1682514405&single=true&output=csv",
+        lastUrl    :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=26725297&single=true&output=csv",
+        stateUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=966214747&single=true&output=csv",
+        summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1051073944&single=true&output=csv"
+      },
+      brand:{ name:"MI Ma'arif Beton", logo:"" },
+      theme:"dark"
+    };
 
-  // Deep-merge saved config with DEFAULT_CONFIG (agar first run langsung jalan).
-  function loadConfig(){
-    const saved = JSON.parse(localStorage.getItem("absensi_cfg")||"{}");
-    // helper deep merge
-    const dm = (a,b)=>Object.fromEntries(
-      Object.keys({...a,...b}).map(k=>{
-        const va=a?.[k], vb=b?.[k];
-        if(va && typeof va==="object" && !Array.isArray(va)) return [k, dm(va, vb||{})];
-        return [k, vb!==undefined ? vb : va];
-      })
-    );
-    // jika saved berisi placeholder/empty, abaikan & pakai default
-    const cleaned = JSON.parse(JSON.stringify(saved||{}));
-    const isPlaceholder = v => typeof v==="string" && /^PUT_.*_URL_HERE$/.test(v);
-    ["siswa","guru"].forEach(grp=>{
-      if(!cleaned[grp]) cleaned[grp]={};
-      for(const key of ["databaseUrl","pairsUrl","logUrl","lastUrl","stateUrl","summaryUrl"]){
-        if(!cleaned[grp][key] || isPlaceholder(cleaned[grp][key])) delete cleaned[grp][key];
-      }
-    });
-    return dm(DEFAULT_CONFIG, cleaned);
-  }
-
-  const CONFIG = loadConfig();
+    // Deep-merge saved config with DEFAULT_CONFIG
+    function loadConfig(){
+      const saved = JSON.parse(localStorage.getItem("absensi_cfg")||"{}");
+      const dm = (a,b)=>Object.fromEntries(
+        Object.keys({...a,...b}).map(k=>{
+          const va=a?.[k], vb=b?.[k];
+          if(va && typeof va==="object" && !Array.isArray(va)) return [k, dm(va, vb||{})];
+          return [k, vb!==undefined ? vb : va];
+        })
+      );
+      const cleaned = JSON.parse(JSON.stringify(saved||{}));
+      const isPlaceholder = v => typeof v==="string" && /^PUT_.*_URL_HERE$/.test(v);
+      ["siswa","guru"].forEach(grp=>{
+        if(!cleaned[grp]) cleaned[grp]={};
+        for(const key of ["databaseUrl","pairsUrl","logUrl","lastUrl","stateUrl","summaryUrl"]){
+          if(!cleaned[grp][key] || isPlaceholder(cleaned[grp][key])) delete cleaned[grp][key];
+        }
+      });
+      return dm(DEFAULT_CONFIG, cleaned);
+    }
+    const CONFIG = loadConfig();
 
     /* ========== ROUTER ========== */
     const navLinks=document.querySelectorAll("aside a[data-route]");
@@ -422,7 +437,6 @@
     const normKey = k => String(k||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
     function normalizeRow(o){ const out={}; for(const [k,v] of Object.entries(o)) out[normKey(k)] = v; return out; }
 
-    // auto-konversi Google Sheets edit/link view -> CSV export
     function toCSVUrl(url){
       if(!url) return url;
       url = url.trim();
@@ -532,11 +546,6 @@
       animateCount(document.getElementById("cardInside"),  inside);
       animateCount(document.getElementById("cardOutside"), outside);
 
-      const pct = (n)=> totalDb? Math.round((n/totalDb)*100) : 0;
-      document.getElementById("barTotal").style.width = "100%";
-      document.getElementById("barIn").style.width    = pct(inside)+"%";
-      document.getElementById("barOut").style.width   = pct(outside)+"%";
-
       const recent=[].concat((cache.siswaLog.length?cache.siswaLog:cache.siswaPairs).map(r=>({type:"Siswa",nama:r["nama"],arah:(r["arah"]||r["last_arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||r["last_ts"], sesi:r["sesi"]})))
                       .concat((cache.guruLog.length?cache.guruLog:cache.guruPairs).map(r=>({type:"Guru",nama:r["nama"],arah:(r["arah"]||r["last_arah"]||"").toUpperCase(),ts:r["ts"]||r["in_ts"]||r["out_ts"]||r["last_ts"], sesi:r["sesi"]})))
                       .filter(x=>x.ts).sort((a,b)=>parseTS(b.ts)-parseTS(a.ts)).slice(0,20);
@@ -552,7 +561,6 @@
       }).join("") || `<div class="text-sm text-[color:var(--muted)]">Belum ada data.</div>`;
     }
 
-    // ======= MASTER DATA from DB sheets =======
     function renderTablesDb(){
       const qS=(document.getElementById("filterSiswa").value||"").toLowerCase();
       const arrS=cache.siswaDb.map(r=>({id:r["id"]||"",nama:r["nama"]||"",kelas:r["kelas"]||""}));
@@ -569,20 +577,12 @@
         `<tr><td colspan="3" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
-    // ======= MASIH DI LUAR (prioritas State) =======
     function renderOutside(){
-      // --- Siswa
       let sState = cache.siswaState.map(r=>({
-        id: r["id"]||"",
-        nama: r["nama"]||"",
-        kelas: r["kelas"]||"",
-        sesi: r["sesi"]||r["hari_sesi"]||"",
-        sejak_out: r["sejak_out"]||"",
-        sejak_in: r["sejak_in"]||"",
-        status: (r["status"]||"").toUpperCase()
+        id: r["id"]||"", nama: r["nama"]||"", kelas: r["kelas"]||"", sesi: r["sesi"]||r["hari_sesi"]||"",
+        sejak_out: r["sejak_out"]||"", sejak_in: r["sejak_in"]||"", status: (r["status"]||"").toUpperCase()
       }));
       if(!sState.length){
-        // fallback dari Last bila State kosong
         sState = cache.siswaLast.map(r=>({
           id:r["id"]||"", nama:r["nama"]||"", kelas:r["kelas"]||"", sesi:r["sesi"]||r["hari_sesi"]||"",
           sejak_out: (r["last_arah"]||"").toUpperCase()==="OUT" ? (r["last_ts"]||"") : "",
@@ -602,15 +602,9 @@
         <td class="py-2 pr-3">${x.id||"-"}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.kelas||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua siswa berada di dalam ✅</td></tr>`;
 
-      // --- Guru
       let gState = cache.guruState.map(r=>({
-        id:r["id"]||"",
-        nama:r["nama"]||"",
-        unit:r["unit_kelas"]||r["unit"]||"",
-        sesi:r["sesi"]||"",
-        sejak_out:r["sejak_out"]||"",
-        sejak_in:r["sejak_in"]||"",
-        status:(r["status"]||"").toUpperCase()
+        id:r["id"]||"", nama:r["nama"]||"", unit:r["unit_kelas"]||r["unit"]||"", sesi:r["sesi"]||"",
+        sejak_out:r["sejak_out"]||"", sejak_in:r["sejak_in"]||"", status:(r["status"]||"").toUpperCase()
       }));
       if(!gState.length){
         gState = cache.guruLast.map(r=>({
@@ -633,9 +627,7 @@
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua guru berada di dalam ✅</td></tr>`;
     }
 
-    // ======= STATE (prioritas State, fallback Last) =======
     function renderState(){
-      // --- Siswa
       let s=cache.siswaState.map(r=>{
         const status=(r["status"]||"").toUpperCase();
         const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
@@ -655,7 +647,6 @@
         return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r.nama}</td><td class="py-2 pr-3">${r.kelas}</td><td class="py-2 pr-3">${r.sesi}</td><td class="py-2 pr-3">${r.since?fmtSince(r.since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${r.st}</span></td></tr>`;
       }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
 
-      // --- Guru
       let g=cache.guruState.map(r=>{
         const status=(r["status"]||"").toUpperCase();
         const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
@@ -676,9 +667,7 @@
       }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
-    // ======= RIWAYAT (one row per entry from sheet Riwayat) =======
     function renderRiwayat(){
-      // Normalisasi riwayat siswa
       const rs = (cache.siswaLog.length? cache.siswaLog : cache.siswaPairs).map(r=>({
         who:"SISWA",
         tanggal:r["tanggal"]||r["tgl"]||"",
@@ -690,8 +679,6 @@
         in_ts:r["in_ts"]||r["in"]||"",
         durasi:r["durasi"]||r["total_durasi"]||r["total"]||""
       }));
-
-      // Normalisasi riwayat guru
       const rg = (cache.guruLog.length? cache.guruLog : cache.guruPairs).map(r=>({
         who:"GURU",
         tanggal:r["tanggal"]||r["tgl"]||"",
@@ -703,7 +690,6 @@
         in_ts:r["in_ts"]||r["in"]||"",
         durasi:r["durasi"]||r["total_durasi"]||r["total"]||""
       }));
-
       let rows = rs.concat(rg).sort((a,b)=>parseTS(b.in_ts||b.out_ts||b.tanggal) - parseTS(a.in_ts||a.out_ts||a.tanggal)).slice(0,400);
 
       const type=document.getElementById("filterTipe").value;
@@ -756,7 +742,6 @@
 
     function toast(msg){const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1700);}
 
-    // Theme & Brand
     function applyTheme(){ document.body.classList.toggle("theme-light",CONFIG.theme==="light"); }
     document.getElementById("btnTheme").onclick=()=>{ CONFIG.theme=CONFIG.theme==="light"?"dark":"light"; persistConfig(); applyTheme(); };
     function brandApply(){
@@ -778,20 +763,39 @@
     function renderCmd(q){
       q=q.toLowerCase();
       const shortcuts=[
-        {label:"Dashboard",section:"dashboard"},{label:"Siswa (DB)",section:"siswa"},{label:"Guru/Pembina (DB)",section:"guru"},
-        {label:"Masih di Luar",section:"outside"},{label:"State",section:"state"},{label:"Riwayat",section:"riwayat"},{label:"Summary",section:"summary"},{label:"Konfigurasi",section:"konfigurasi"}
+        {label:"Dashboard",section:"dashboard"},
+        {label:"Siswa (DB)",section:"siswa"},
+        {label:"Guru/Pembina (DB)",section:"guru"},
+        {label:"Scan Siswa (Spreadsheet)", url: SCAN_LINKS.siswa},
+        {label:"Scan Guru/Pembina (Spreadsheet)", url: SCAN_LINKS.guru},
+        {label:"Masih di Luar",section:"outside"},
+        {label:"State",section:"state"},
+        {label:"Riwayat",section:"riwayat"},
+        {label:"Summary",section:"summary"},
+        {label:"Konfigurasi",section:"konfigurasi"}
       ];
       const people=cmdIndex.filter(x=>(x.nama+x.id+x.who).toLowerCase().includes(q)).slice(0,8);
       const menu=shortcuts.filter(x=>x.label.toLowerCase().includes(q));
-      cmdList.innerHTML=[...menu.map(m=>`<button class="w-full text-left px-3 py-2 hover:bg-white/5 rounded flex items-center justify-between" data-go="${m.section}"><span>${m.label}</span><span class="text-[11px] text-[color:var(--muted)]">menu</span></button>`),
-                         ...people.map(p=>`<button class="w-full text-left px-3 py-2 hover:bg-white/5 rounded" data-go="${p.section}" data-q="${p.nama}"><b>${p.nama}</b> <span class="text-[color:var(--muted)]">• ${p.who} • ${p.id}</span></button>`)]
-                        .join("") || `<div class="px-3 py-6 text-sm text-[color:var(--muted)]">Tidak ada hasil.</div>`;
+      cmdList.innerHTML=[
+        ...menu.map(m=> m.url
+          ? `<button class="w-full text-left px-3 py-2 hover:bg-white/5 rounded flex items-center justify-between" data-url="${m.url}">
+               <span>${m.label}</span><span class="text-[11px] text-[color:var(--muted)]">buka</span>
+             </button>`
+          : `<button class="w-full text-left px-3 py-2 hover:bg-white/5 rounded flex items-center justify-between" data-go="${m.section}">
+               <span>${m.label}</span><span class="text-[11px] text-[color:var(--muted)]">menu</span>
+             </button>`
+        ),
+        ...people.map(p=>`<button class="w-full text-left px-3 py-2 hover:bg-white/5 rounded" data-go="${p.section}" data-q="${p.nama}"><b>${p.nama}</b> <span class="text-[color:var(--muted)]">• ${p.who} • ${p.id}</span></button>`)
+      ].join("") || `<div class="px-3 py-6 text-sm text-[color:var(--muted)]">Tidak ada hasil.</div>`;
       [...cmdList.querySelectorAll("button")].forEach(b=>b.onclick=()=>{
-        const go=b.dataset.go, q=b.dataset.q||"";
-        showRoute(go);
-        if(go==="siswa"){document.getElementById("filterSiswa").value=q; renderTablesDb();}
-        if(go==="guru"){document.getElementById("filterGuru").value=q; renderTablesDb();}
-        closeCmd();
+        const url=b.dataset.url, go=b.dataset.go, q=b.dataset.q||"";
+        if(url){ openScan(url); closeCmd(); return; }
+        if(go){
+          showRoute(go);
+          if(go==="siswa"){document.getElementById("filterSiswa").value=q; renderTablesDb();}
+          if(go==="guru"){document.getElementById("filterGuru").value=q; renderTablesDb();}
+          closeCmd();
+        }
       });
     }
     document.getElementById("btnCmd").onclick=openCmd;
@@ -824,4 +828,3 @@
   </script>
 </body>
 </html>
-
