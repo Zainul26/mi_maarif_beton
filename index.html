@@ -78,6 +78,20 @@
     .cmd-backdrop{position:fixed;inset:0;background:#0006;backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding-top:10vh;z-index:50}
     .cmd{width:min(800px,90vw);border-radius:16px;background:var(--panel);border:1px solid var(--card-bdr);overflow:hidden}
     .cmd-backdrop.show{display:flex}
+
+    /* ====== Scan Buttons (baru) ====== */
+    .scan-wrap{display:flex;gap:.75rem;flex-wrap:wrap}
+    .btn-scan{position:relative;display:inline-flex;align-items:center;gap:.55rem;padding:0.9rem 1.2rem;font-size:.95rem;
+      border-radius:12px;font-weight:600;overflow:hidden;cursor:pointer;user-select:none;
+      transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
+    .btn-scan.guru{background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff;}
+    .btn-scan.siswa{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
+    .btn-scan:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 26px rgba(0,0,0,.28);filter:saturate(1.15)}
+    .btn-scan .pulse{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);
+      opacity:0;animation:pulse 2.4s infinite;pointer-events:none;}
+    @keyframes pulse{0%{opacity:0;transform:scale(.9)}50%{opacity:.8;transform:scale(1.1)}100%{opacity:0;transform:scale(.9)}}
+    .ripple{position:absolute;border-radius:50%;transform:scale(0);animation:ripple .6s linear;background:rgba(255,255,255,.4);pointer-events:none;}
+    @keyframes ripple{to{transform:scale(4);opacity:0}}
   </style>
 </head>
 <body>
@@ -154,13 +168,17 @@
         <img id="heroLogo" src="image.jpg" alt="Logo" class="h-20 w-20 rounded-2xl object-cover ring-4 ring-amber-400/70 shadow-lg">
         <div class="flex-1">
           <h1 class="text-2xl md:text-3xl font-extrabold leading-tight">Gerbang <span class="text-amber-400">Bumi Perkemahan</span> — Monitoring Kehadiran</h1>
-          <p class="text-[color:var(--muted)] mt-1 text-sm">Tema kepramukaan, animasi halus, light/dark mode, dan data real-time dari Spreadsheet.</p>
-          <div class="mt-3 flex flex-wrap gap-2"><span class="chip ok">Stabil</span><span class="chip warn">Light/Dark</span><span class="chip">CSV Publish-to-Web</span></div>
+          <p class="text-[color:var(--muted)] mt-1 text-sm">Monitoring real-time dari Google Sheets untuk siswa & guru.</p>
+          <div class="mt-3"><span class="chip">Tema Kepramukaan</span></div>
 
-          <!-- Tombol cepat ke Spreadsheet Scan -->
-          <div class="mt-4 flex flex-wrap gap-2">
-            <a id="openScanGuru"  class="px-3 py-2 rounded-lg text-sm bg-amber-600/90 hover:bg-amber-500 transition" href="#">Scan Guru / Pembina</a>
-            <a id="openScanSiswa" class="px-3 py-2 rounded-lg text-sm bg-emerald-600/90 hover:bg-emerald-500 transition" href="#">Scan Siswa</a>
+          <!-- Tombol cepat ke Spreadsheet Scan (baru, animasi) -->
+          <div class="mt-4 scan-wrap">
+            <a id="openScanGuru"  class="btn-scan guru" href="#">
+              <span class="pulse"></span>👨‍🏫 Scan Guru / Pembina
+            </a>
+            <a id="openScanSiswa" class="btn-scan siswa" href="#">
+              <span class="pulse"></span>👩‍🎓 Scan Siswa
+            </a>
           </div>
         </div>
       </section>
@@ -230,7 +248,7 @@
         </div>
       </section>
 
-      <!-- OUTSIDE -->
+      <!-- OUTSIDE (pakai sheet State) -->
       <section id="page-outside" class="page hidden space-y-4">
         <h2 class="text-xl font-bold">Masih di Luar</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -251,7 +269,7 @@
         </div>
       </section>
 
-      <!-- STATE -->
+      <!-- STATE (prioritas State, fallback Last) -->
       <section id="page-state" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">State (Posisi Sekarang)</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -266,7 +284,7 @@
         </div>
       </section>
 
-      <!-- RIWAYAT -->
+      <!-- RIWAYAT (sheet Riwayat, satu baris per entri) -->
       <section id="page-riwayat" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">Riwayat Aktivitas</h2>
         <div class="rope card p-4">
@@ -378,6 +396,21 @@
       if(s) s.addEventListener("click",(e)=>{e.preventDefault();openScan(SCAN_LINKS.siswa);});
     });
 
+    /* Ripple untuk tombol scan */
+    document.addEventListener("click",(e)=>{
+      const btn = e.target.closest(".btn-scan");
+      if(!btn) return;
+      const rip = document.createElement("span");
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      rip.className = "ripple";
+      rip.style.width = rip.style.height = size + "px";
+      rip.style.left = (e.clientX - rect.left - size/2) + "px";
+      rip.style.top  = (e.clientY - rect.top  - size/2) + "px";
+      btn.appendChild(rip);
+      setTimeout(()=>rip.remove(), 650);
+    });
+
     /* ========== CONFIG ========== */
     const DEFAULT_CONFIG = {
       siswa:{
@@ -400,9 +433,10 @@
       theme:"dark"
     };
 
-    // Deep-merge saved config with DEFAULT_CONFIG
+    // Deep-merge saved config with DEFAULT_CONFIG (agar first run langsung jalan).
     function loadConfig(){
       const saved = JSON.parse(localStorage.getItem("absensi_cfg")||"{}");
+      // helper deep merge
       const dm = (a,b)=>Object.fromEntries(
         Object.keys({...a,...b}).map(k=>{
           const va=a?.[k], vb=b?.[k];
@@ -410,6 +444,7 @@
           return [k, vb!==undefined ? vb : va];
         })
       );
+      // jika saved berisi placeholder/empty, abaikan & pakai default
       const cleaned = JSON.parse(JSON.stringify(saved||{}));
       const isPlaceholder = v => typeof v==="string" && /^PUT_.*_URL_HERE$/.test(v);
       ["siswa","guru"].forEach(grp=>{
@@ -420,6 +455,7 @@
       });
       return dm(DEFAULT_CONFIG, cleaned);
     }
+
     const CONFIG = loadConfig();
 
     /* ========== ROUTER ========== */
@@ -437,6 +473,7 @@
     const normKey = k => String(k||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
     function normalizeRow(o){ const out={}; for(const [k,v] of Object.entries(o)) out[normKey(k)] = v; return out; }
 
+    // auto-konversi Google Sheets edit/link view -> CSV export
     function toCSVUrl(url){
       if(!url) return url;
       url = url.trim();
@@ -561,6 +598,7 @@
       }).join("") || `<div class="text-sm text-[color:var(--muted)]">Belum ada data.</div>`;
     }
 
+    // ======= MASTER DATA from DB sheets =======
     function renderTablesDb(){
       const qS=(document.getElementById("filterSiswa").value||"").toLowerCase();
       const arrS=cache.siswaDb.map(r=>({id:r["id"]||"",nama:r["nama"]||"",kelas:r["kelas"]||""}));
@@ -577,12 +615,20 @@
         `<tr><td colspan="3" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
+    // ======= MASIH DI LUAR (prioritas State) =======
     function renderOutside(){
+      // --- Siswa
       let sState = cache.siswaState.map(r=>({
-        id: r["id"]||"", nama: r["nama"]||"", kelas: r["kelas"]||"", sesi: r["sesi"]||r["hari_sesi"]||"",
-        sejak_out: r["sejak_out"]||"", sejak_in: r["sejak_in"]||"", status: (r["status"]||"").toUpperCase()
+        id: r["id"]||"",
+        nama: r["nama"]||"",
+        kelas: r["kelas"]||"",
+        sesi: r["sesi"]||r["hari_sesi"]||"",
+        sejak_out: r["sejak_out"]||"",
+        sejak_in: r["sejak_in"]||"",
+        status: (r["status"]||"").toUpperCase()
       }));
       if(!sState.length){
+        // fallback dari Last bila State kosong
         sState = cache.siswaLast.map(r=>({
           id:r["id"]||"", nama:r["nama"]||"", kelas:r["kelas"]||"", sesi:r["sesi"]||r["hari_sesi"]||"",
           sejak_out: (r["last_arah"]||"").toUpperCase()==="OUT" ? (r["last_ts"]||"") : "",
@@ -602,9 +648,15 @@
         <td class="py-2 pr-3">${x.id||"-"}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.kelas||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua siswa berada di dalam ✅</td></tr>`;
 
+      // --- Guru
       let gState = cache.guruState.map(r=>({
-        id:r["id"]||"", nama:r["nama"]||"", unit:r["unit_kelas"]||r["unit"]||"", sesi:r["sesi"]||"",
-        sejak_out:r["sejak_out"]||"", sejak_in:r["sejak_in"]||"", status:(r["status"]||"").toUpperCase()
+        id:r["id"]||"",
+        nama:r["nama"]||"",
+        unit:r["unit_kelas"]||r["unit"]||"",
+        sesi:r["sesi"]||"",
+        sejak_out:r["sejak_out"]||"",
+        sejak_in:r["sejak_in"]||"",
+        status:(r["status"]||"").toUpperCase()
       }));
       if(!gState.length){
         gState = cache.guruLast.map(r=>({
@@ -627,7 +679,9 @@
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua guru berada di dalam ✅</td></tr>`;
     }
 
+    // ======= STATE (prioritas State, fallback Last) =======
     function renderState(){
+      // --- Siswa
       let s=cache.siswaState.map(r=>{
         const status=(r["status"]||"").toUpperCase();
         const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
@@ -647,6 +701,7 @@
         return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r.nama}</td><td class="py-2 pr-3">${r.kelas}</td><td class="py-2 pr-3">${r.sesi}</td><td class="py-2 pr-3">${r.since?fmtSince(r.since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${r.st}</span></td></tr>`;
       }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
 
+      // --- Guru
       let g=cache.guruState.map(r=>{
         const status=(r["status"]||"").toUpperCase();
         const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
@@ -667,7 +722,9 @@
       }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
+    // ======= RIWAYAT (one row per entry from sheet Riwayat) =======
     function renderRiwayat(){
+      // Normalisasi riwayat siswa
       const rs = (cache.siswaLog.length? cache.siswaLog : cache.siswaPairs).map(r=>({
         who:"SISWA",
         tanggal:r["tanggal"]||r["tgl"]||"",
@@ -679,6 +736,8 @@
         in_ts:r["in_ts"]||r["in"]||"",
         durasi:r["durasi"]||r["total_durasi"]||r["total"]||""
       }));
+
+      // Normalisasi riwayat guru
       const rg = (cache.guruLog.length? cache.guruLog : cache.guruPairs).map(r=>({
         who:"GURU",
         tanggal:r["tanggal"]||r["tgl"]||"",
@@ -690,6 +749,7 @@
         in_ts:r["in_ts"]||r["in"]||"",
         durasi:r["durasi"]||r["total_durasi"]||r["total"]||""
       }));
+
       let rows = rs.concat(rg).sort((a,b)=>parseTS(b.in_ts||b.out_ts||b.tanggal) - parseTS(a.in_ts||a.out_ts||a.tanggal)).slice(0,400);
 
       const type=document.getElementById("filterTipe").value;
@@ -742,6 +802,7 @@
 
     function toast(msg){const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1700);}
 
+    // Theme & Brand
     function applyTheme(){ document.body.classList.toggle("theme-light",CONFIG.theme==="light"); }
     document.getElementById("btnTheme").onclick=()=>{ CONFIG.theme=CONFIG.theme==="light"?"dark":"light"; persistConfig(); applyTheme(); };
     function brandApply(){
