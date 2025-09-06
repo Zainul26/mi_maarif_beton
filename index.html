@@ -81,9 +81,10 @@
 
     /* ====== Scan Buttons (baru) ====== */
     .scan-wrap{display:flex;gap:.75rem;flex-wrap:wrap}
-    .btn-scan{position:relative;display:inline-flex;align-items:center;gap:.55rem;padding:0.9rem 1.2rem;font-size:.95rem;
-      border-radius:12px;font-weight:600;overflow:hidden;cursor:pointer;user-select:none;
+    .btn-scan{position:relative;display:inline-flex;align-items:center;gap:.65rem;padding:0.9rem 1.2rem;font-size:.95rem;
+      border-radius:12px;font-weight:700;overflow:hidden;cursor:pointer;user-select:none;
       transition:transform .25s ease, box-shadow .25s ease, filter .25s ease;}
+    .btn-scan .ico{width:20px;height:20px;display:inline-block}
     .btn-scan.guru{background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff;}
     .btn-scan.siswa{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
     .btn-scan:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 26px rgba(0,0,0,.28);filter:saturate(1.15)}
@@ -147,9 +148,6 @@
         <a data-route="summary" class="block rope card p-3.5"><div class="flex items-center gap-2">
           <svg class="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M4 19h16M4 15h10M4 11h7M4 7h13"/></svg>
           <div><div class="font-semibold">Summary</div><div class="text-xs text-[color:var(--muted)]">Durasi</div></div></div></a>
-        <a data-route="konfigurasi" class="block rope card p-3.5"><div class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 100 8 4 4 0 000-8z"/><path fill-rule="evenodd" d="M4.93 6.93a10 10 0 1114.14 14.14 10 10 0 01-14.14-14.14z" clip-rule="evenodd"/></svg>
-          <div><div class="font-semibold">Konfigurasi</div><div class="text-xs text-[color:var(--muted)]">Set URL CSV</div></div></div></a>
 
         <div class="mt-6 rope card p-4">
           <div class="text-xs uppercase tracking-widest text-[color:var(--muted)] mb-1">Auto Refresh</div>
@@ -171,13 +169,17 @@
           <p class="text-[color:var(--muted)] mt-1 text-sm">Monitoring real-time dari Google Sheets untuk siswa & guru.</p>
           <div class="mt-3"><span class="chip">Tema Kepramukaan</span></div>
 
-          <!-- Tombol cepat ke Spreadsheet Scan (baru, animasi) -->
+          <!-- Tombol cepat ke Spreadsheet Scan (baru, animasi + ikon dinamis) -->
           <div class="mt-4 scan-wrap">
             <a id="openScanGuru"  class="btn-scan guru" href="#">
-              <span class="pulse"></span>👨‍🏫 Scan Guru / Pembina
+              <span class="pulse"></span>
+              <span class="ico" id="icoGuru"></span>
+              <span>Scan Guru / Pembina</span>
             </a>
             <a id="openScanSiswa" class="btn-scan siswa" href="#">
-              <span class="pulse"></span>👩‍🎓 Scan Siswa
+              <span class="pulse"></span>
+              <span class="ico" id="icoSiswa"></span>
+              <span>Scan Siswa</span>
             </a>
           </div>
         </div>
@@ -248,7 +250,7 @@
         </div>
       </section>
 
-      <!-- OUTSIDE (pakai sheet State) -->
+      <!-- OUTSIDE -->
       <section id="page-outside" class="page hidden space-y-4">
         <h2 class="text-xl font-bold">Masih di Luar</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -269,7 +271,7 @@
         </div>
       </section>
 
-      <!-- STATE (prioritas State, fallback Last) -->
+      <!-- STATE -->
       <section id="page-state" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">State (Posisi Sekarang)</h2>
         <div class="grid lg:grid-cols-2 gap-4">
@@ -284,7 +286,7 @@
         </div>
       </section>
 
-      <!-- RIWAYAT (sheet Riwayat, satu baris per entri) -->
+      <!-- RIWAYAT -->
       <section id="page-riwayat" class="page hidden space-y-6">
         <h2 class="text-xl font-bold">Riwayat Aktivitas</h2>
         <div class="rope card p-4">
@@ -335,36 +337,6 @@
           </div>
         </div>
       </section>
-
-      <!-- KONFIGURASI -->
-      <section id="page-konfigurasi" class="page hidden">
-        <h2 class="text-xl font-bold mb-3">Konfigurasi Sumber Data</h2>
-        <div class="rope card p-5 space-y-4">
-          <div class="grid lg:grid-cols-2 gap-4">
-            <!-- SISWA -->
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Pairs (CSV)</div><input id="cfgPairsSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Last (CSV)</div><input id="cfgLastSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Database (Peserta)</div><input id="cfgDbSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL tab Peserta (boleh URL edit)"/></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — State</div><input id="cfgStateSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Riwayat (Sheet Riwayat)</div><input id="cfgLogSiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL tab Riwayat"/></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">SISWA — Summary</div><input id="cfgSummarySiswa" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <!-- GURU -->
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Pairs (CSV)</div><input id="cfgPairsGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Last (CSV)</div><input id="cfgLastGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Database (Pembina)</div><input id="cfgDbGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL tab Pembina (boleh URL edit)"/></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — State</div><input id="cfgStateGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Riwayat (Sheet Riwayat)</div><input id="cfgLogGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="Tempel URL tab Riwayat"/></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">GURU — Summary</div><input id="cfgSummaryGuru" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <!-- BRAND -->
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">Brand — Nama Sekolah</div><input id="cfgBrandName" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" /></label>
-            <label class="block"><div class="text-xs text-[color:var(--muted)] mb-1">Brand — Logo (URL opsional)</div><input id="cfgBrandLogo" class="w-full px-3 py-2 bg-white/5 theme-light:bg-slate-100 border divider rounded-lg" placeholder="kosongkan untuk pakai image.jpg" /></label>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button id="btnSaveCfg" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 transition">Simpan</button>
-            <button id="btnClearCfg" class="px-4 py-2 rounded-lg border divider">Reset</button>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 
@@ -372,7 +344,7 @@
   <div id="cmdWrap" class="cmd-backdrop">
     <div class="cmd rope">
       <div class="p-3 border-b divider">
-        <input id="cmdInput" placeholder="Cari siswa/guru atau ketik: dashboard, siswa, guru, luar, state, riwayat, summary, cfg"
+        <input id="cmdInput" placeholder="Cari siswa/guru atau ketik: dashboard, siswa, guru, luar, state, riwayat, summary"
                class="w-full px-3 py-2 text-sm bg-white/5 theme-light:bg-slate-100 border divider rounded-lg outline-none">
       </div>
       <div id="cmdList" class="max-h-[50vh] overflow-y-auto p-2 space-y-2"></div>
@@ -383,7 +355,7 @@
   <div id="toast" class="toast rope px-4 py-2 text-sm">✅ Data diperbarui</div>
 
   <script>
-    /* ========== LINKS SCAN (Spreadsheet) ========== */
+    /* ========== LINKS SCAN (Spreadsheet) — paten di kode ========== */
     const SCAN_LINKS = {
       guru:  "https://docs.google.com/spreadsheets/d/1P8Cbc4T6srF44Haei2_zED_wrKP7IKQAfZrtIqWgqKY/edit?gid=616064247#gid=616064247",
       siswa: "https://docs.google.com/spreadsheets/d/1esqkUoXnOjqXS8mg03PDdF1U4S5C8tKRkymIIWoBC-8/edit?gid=1843199320#gid=1843199320"
@@ -411,8 +383,37 @@
       setTimeout(()=>rip.remove(), 650);
     });
 
-    /* ========== CONFIG ========== */
-    const DEFAULT_CONFIG = {
+    /* Ikon SVG dinamis (bertema pramuka) */
+    const svgs = {
+      // Objek kecil, path simple agar ringan
+      kompas:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20Zm-3 13l2-5 5-2-2 5-5 2Z"/></svg>',
+      tenda:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3L12 3Zm0 5l-5 10h10L12 8Z"/></svg>',
+      obor:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 3c0 3 2 5 4 5s4-2 4-5c2 2 2 6-2 8l-1 7H11l-1-7C6 9 6 5 8 3Z"/></svg>',
+      peluit:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 14a5 5 0 115 5H7a2 2 0 110-4h6l6-3v4l-6 3H9a4 4 0 01-4-5Z"/></svg>',
+      badge:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 5 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1 3-5Z"/></svg>'
+    };
+    const guruIcons  = [svgs.kompas, svgs.obor, svgs.badge];
+    const siswaIcons = [svgs.tenda, svgs.peluit, svgs.kompas];
+
+    function cycleIcons(el, list, interval=1800){
+      let i=0;
+      const swap=()=>{ el.innerHTML=list[i%list.length]; i++; el.animate([{transform:'scale(.9) rotate(-6deg)'},{transform:'scale(1) rotate(0)'}],{duration:260,easing:'ease-out'}); };
+      swap();
+      let timer=setInterval(swap, interval);
+      // percepat saat hover tombol
+      const btn=el.closest('.btn-scan');
+      if(btn){
+        btn.addEventListener('mouseenter',()=>{clearInterval(timer); timer=setInterval(swap, 900);});
+        btn.addEventListener('mouseleave',()=>{clearInterval(timer); timer=setInterval(swap, interval);});
+      }
+    }
+    window.addEventListener('DOMContentLoaded',()=>{
+      cycleIcons(document.getElementById('icoGuru'),  guruIcons);
+      cycleIcons(document.getElementById('icoSiswa'), siswaIcons);
+    });
+
+    /* ========== CONFIG (paten di kode, tanpa UI) ========== */
+    const CONFIG = {
       siswa:{
         databaseUrl:"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=454613141&single=true&output=csv",
         pairsUrl   :"https://docs.google.com/spreadsheets/d/e/2PACX-1vTcmoRTpdbtu5prbG1qs_dGmxZeEHJbSgxiVDyxxEJBfxz3rBnrIFc5tuD9RYsLTHD2tpFPYRu_9Dmd/pub?gid=863957525&single=true&output=csv",
@@ -430,33 +431,8 @@
         summaryUrl :"https://docs.google.com/spreadsheets/d/e/2PACX-1vRIqYInlR6UOAKu_urRqwPdRxp9dLEc1H7vGsBMgxNCtTPdeeX-CXAAHk5lqVs1jujpgpx2okbfSDrx/pub?gid=1051073944&single=true&output=csv"
       },
       brand:{ name:"MI Ma'arif Beton", logo:"" },
-      theme:"dark"
+      theme: (localStorage.getItem('absensi_theme')||'dark')
     };
-
-    // Deep-merge saved config with DEFAULT_CONFIG (agar first run langsung jalan).
-    function loadConfig(){
-      const saved = JSON.parse(localStorage.getItem("absensi_cfg")||"{}");
-      // helper deep merge
-      const dm = (a,b)=>Object.fromEntries(
-        Object.keys({...a,...b}).map(k=>{
-          const va=a?.[k], vb=b?.[k];
-          if(va && typeof va==="object" && !Array.isArray(va)) return [k, dm(va, vb||{})];
-          return [k, vb!==undefined ? vb : va];
-        })
-      );
-      // jika saved berisi placeholder/empty, abaikan & pakai default
-      const cleaned = JSON.parse(JSON.stringify(saved||{}));
-      const isPlaceholder = v => typeof v==="string" && /^PUT_.*_URL_HERE$/.test(v);
-      ["siswa","guru"].forEach(grp=>{
-        if(!cleaned[grp]) cleaned[grp]={};
-        for(const key of ["databaseUrl","pairsUrl","logUrl","lastUrl","stateUrl","summaryUrl"]){
-          if(!cleaned[grp][key] || isPlaceholder(cleaned[grp][key])) delete cleaned[grp][key];
-        }
-      });
-      return dm(DEFAULT_CONFIG, cleaned);
-    }
-
-    const CONFIG = loadConfig();
 
     /* ========== ROUTER ========== */
     const navLinks=document.querySelectorAll("aside a[data-route]");
@@ -473,7 +449,6 @@
     const normKey = k => String(k||"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_+|_+$/g,"");
     function normalizeRow(o){ const out={}; for(const [k,v] of Object.entries(o)) out[normKey(k)] = v; return out; }
 
-    // auto-konversi Google Sheets edit/link view -> CSV export
     function toCSVUrl(url){
       if(!url) return url;
       url = url.trim();
@@ -598,7 +573,6 @@
       }).join("") || `<div class="text-sm text-[color:var(--muted)]">Belum ada data.</div>`;
     }
 
-    // ======= MASTER DATA from DB sheets =======
     function renderTablesDb(){
       const qS=(document.getElementById("filterSiswa").value||"").toLowerCase();
       const arrS=cache.siswaDb.map(r=>({id:r["id"]||"",nama:r["nama"]||"",kelas:r["kelas"]||""}));
@@ -615,20 +589,12 @@
         `<tr><td colspan="3" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
-    // ======= MASIH DI LUAR (prioritas State) =======
     function renderOutside(){
-      // --- Siswa
       let sState = cache.siswaState.map(r=>({
-        id: r["id"]||"",
-        nama: r["nama"]||"",
-        kelas: r["kelas"]||"",
-        sesi: r["sesi"]||r["hari_sesi"]||"",
-        sejak_out: r["sejak_out"]||"",
-        sejak_in: r["sejak_in"]||"",
-        status: (r["status"]||"").toUpperCase()
+        id: r["id"]||"", nama: r["nama"]||"", kelas: r["kelas"]||"", sesi: r["sesi"]||r["hari_sesi"]||"",
+        sejak_out: r["sejak_out"]||"", sejak_in: r["sejak_in"]||"", status: (r["status"]||"").toUpperCase()
       }));
       if(!sState.length){
-        // fallback dari Last bila State kosong
         sState = cache.siswaLast.map(r=>({
           id:r["id"]||"", nama:r["nama"]||"", kelas:r["kelas"]||"", sesi:r["sesi"]||r["hari_sesi"]||"",
           sejak_out: (r["last_arah"]||"").toUpperCase()==="OUT" ? (r["last_ts"]||"") : "",
@@ -648,15 +614,9 @@
         <td class="py-2 pr-3">${x.id||"-"}</td><td class="py-2 pr-3">${x.nama}</td><td class="py-2 pr-3">${x.kelas||"-"}</td><td class="py-2 pr-3">${x.sesi||"-"}</td><td class="py-2 pr-3">${x.ts?fmtSince(x.ts):"-"}</td></tr>`).join("") ||
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua siswa berada di dalam ✅</td></tr>`;
 
-      // --- Guru
       let gState = cache.guruState.map(r=>({
-        id:r["id"]||"",
-        nama:r["nama"]||"",
-        unit:r["unit_kelas"]||r["unit"]||"",
-        sesi:r["sesi"]||"",
-        sejak_out:r["sejak_out"]||"",
-        sejak_in:r["sejak_in"]||"",
-        status:(r["status"]||"").toUpperCase()
+        id:r["id"]||"", nama:r["nama"]||"", unit:r["unit_kelas"]||r["unit"]||"", sesi:r["sesi"]||"",
+        sejak_out:r["sejak_out"]||"", sejak_in:r["sejak_in"]||"", status:(r["status"]||"").toUpperCase()
       }));
       if(!gState.length){
         gState = cache.guruLast.map(r=>({
@@ -679,9 +639,7 @@
         `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Semua guru berada di dalam ✅</td></tr>`;
     }
 
-    // ======= STATE (prioritas State, fallback Last) =======
     function renderState(){
-      // --- Siswa
       let s=cache.siswaState.map(r=>{
         const status=(r["status"]||"").toUpperCase();
         const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
@@ -701,7 +659,6 @@
         return `<tr class="border-b divider [animation:fade_.28s_ease_forwards] opacity-0" style="animation-delay:${i*9}ms"><td class="py-2 pr-3">${r.nama}</td><td class="py-2 pr-3">${r.kelas}</td><td class="py-2 pr-3">${r.sesi}</td><td class="py-2 pr-3">${r.since?fmtSince(r.since):"-"}</td><td class="py-2 pr-3"><span class="chip ${chip}">${r.st}</span></td></tr>`;
       }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
 
-      // --- Guru
       let g=cache.guruState.map(r=>{
         const status=(r["status"]||"").toUpperCase();
         const tOut=parseTS(r["sejak_out"]), tIn=parseTS(r["sejak_in"]);
@@ -722,9 +679,7 @@
       }).join("") || `<tr><td colspan="5" class="py-4 text-[color:var(--muted)] text-sm">Tidak ada data.</td></tr>`;
     }
 
-    // ======= RIWAYAT (one row per entry from sheet Riwayat) =======
     function renderRiwayat(){
-      // Normalisasi riwayat siswa
       const rs = (cache.siswaLog.length? cache.siswaLog : cache.siswaPairs).map(r=>({
         who:"SISWA",
         tanggal:r["tanggal"]||r["tgl"]||"",
@@ -736,8 +691,6 @@
         in_ts:r["in_ts"]||r["in"]||"",
         durasi:r["durasi"]||r["total_durasi"]||r["total"]||""
       }));
-
-      // Normalisasi riwayat guru
       const rg = (cache.guruLog.length? cache.guruLog : cache.guruPairs).map(r=>({
         who:"GURU",
         tanggal:r["tanggal"]||r["tgl"]||"",
@@ -749,7 +702,6 @@
         in_ts:r["in_ts"]||r["in"]||"",
         durasi:r["durasi"]||r["total_durasi"]||r["total"]||""
       }));
-
       let rows = rs.concat(rg).sort((a,b)=>parseTS(b.in_ts||b.out_ts||b.tanggal) - parseTS(a.in_ts||a.out_ts||a.tanggal)).slice(0,400);
 
       const type=document.getElementById("filterTipe").value;
@@ -802,9 +754,8 @@
 
     function toast(msg){const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1700);}
 
-    // Theme & Brand
     function applyTheme(){ document.body.classList.toggle("theme-light",CONFIG.theme==="light"); }
-    document.getElementById("btnTheme").onclick=()=>{ CONFIG.theme=CONFIG.theme==="light"?"dark":"light"; persistConfig(); applyTheme(); };
+    document.getElementById("btnTheme").onclick=()=>{ CONFIG.theme=CONFIG.theme==="light"?"dark":"light"; localStorage.setItem('absensi_theme', CONFIG.theme); applyTheme(); };
     function brandApply(){
       document.getElementById("brandSubtitle").textContent=CONFIG.brand.name||"Dashboard & Monitoring";
       const logo=(CONFIG.brand.logo||"").trim()||"image.jpg";
@@ -832,8 +783,7 @@
         {label:"Masih di Luar",section:"outside"},
         {label:"State",section:"state"},
         {label:"Riwayat",section:"riwayat"},
-        {label:"Summary",section:"summary"},
-        {label:"Konfigurasi",section:"konfigurasi"}
+        {label:"Summary",section:"summary"}
       ];
       const people=cmdIndex.filter(x=>(x.nama+x.id+x.who).toLowerCase().includes(q)).slice(0,8);
       const menu=shortcuts.filter(x=>x.label.toLowerCase().includes(q));
@@ -864,25 +814,8 @@
     cmdInput.addEventListener("input",()=>renderCmd(cmdInput.value));
     window.addEventListener("keydown",(e)=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault(); openCmd();}});
 
-    /* ========== CONFIG UI ========== */
-    function loadConfig(){return JSON.parse(localStorage.getItem("absensi_cfg")||"null")||structuredClone(DEFAULT_CONFIG);}
-    function persistConfig(){localStorage.setItem("absensi_cfg",JSON.stringify(CONFIG));}
-    function initConfigUI(){
-      const map={ cfgPairsSiswa:"siswa.pairsUrl", cfgLastSiswa:"siswa.lastUrl", cfgDbSiswa:"siswa.databaseUrl", cfgStateSiswa:"siswa.stateUrl", cfgLogSiswa:"siswa.logUrl", cfgSummarySiswa:"siswa.summaryUrl",
-                  cfgPairsGuru:"guru.pairsUrl",   cfgLastGuru:"guru.lastUrl",   cfgDbGuru:"guru.databaseUrl",   cfgStateGuru:"guru.stateUrl",   cfgLogGuru:"guru.logUrl",   cfgSummaryGuru:"guru.summaryUrl",
-                  cfgBrandName:"brand.name",       cfgBrandLogo:"brand.logo" };
-      for(const id in map){ const [grp,key]=map[id].split("."); document.getElementById(id).value=(CONFIG[grp]?.[key]||""); }
-      document.getElementById("btnSaveCfg").onclick=()=>{
-        for(const id in map){ const [g,k]=map[id].split("."); CONFIG[g][k]=document.getElementById(id).value.trim(); }
-        persistConfig(); brandApply();
-        toast("💾 Konfigurasi disimpan");
-        loadAll();
-      };
-      document.getElementById("btnClearCfg").onclick=()=>{ localStorage.removeItem("absensi_cfg"); location.reload(); };
-    }
-
     // Boot
-    initConfigUI(); brandApply(); applyTheme(); showRoute(location.hash?.slice(1)||"dashboard"); loadAll();
+    brandApply(); applyTheme(); showRoute(location.hash?.slice(1)||"dashboard"); loadAll();
 
     // tiny fade keyframes
     const style=document.createElement("style"); style.textContent="@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}"; document.head.appendChild(style);
